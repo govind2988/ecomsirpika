@@ -1,0 +1,1 @@
+<!DOCTYPE html><html><head><title>Catalog</title></head><body><h1>Product Catalog</h1></body></html>

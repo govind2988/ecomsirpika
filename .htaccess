@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Redirect root to public folder internally
+RewriteRule ^$ public/ [L]
+
+# Redirect all other requests to public folder unless file/folder exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
