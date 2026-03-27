@@ -32,9 +32,7 @@ include '_header.php';
 ?>
 
 <main class="p-6 mt-16 space-y-4">
-    <div class="flex justify-between mb-4">
-        <h1 class="text-3xl font-bold">Orders</h1>
-    </div>
+   
 	
     <section class="overflow-x-auto bg-white shadow rounded-lg">
         <table id="order-table11" class="min-w-full bg-white border-gray-300">

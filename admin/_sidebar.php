@@ -17,10 +17,10 @@ $settings = $settingsRes->fetch_assoc();
 
 <aside class="hidden sm:flex sm:flex-col w-64 fixed h-full z-20">
         <a href="dashboard.php"
-            class="inline-flex items-center justify-start h-16 w-full bg-primary gap-4">
+            class="inline-flex items-center justify-start h-16 w-full bg-gray-900 gap-4">
 
             <?php if (!empty($settings['logo'])): ?>
-			<img src="../uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo" class="h-16 p-1 mx-auto sm:mx-0 rounded-md">
+			<img src="../uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo" class="h-16 p-2 mx-auto sm:mx-0 rounded-md">
             <?php else: ?>
 		  <?php endif; ?>  
 
@@ -47,11 +47,7 @@ $settings = $settingsRes->fetch_assoc();
                     <i class="fa-solid w-6 flex justify-center fa-boxes-stacked"></i>
                     <span class="ft-medium">Products</span>
                 </a>
-                <a href="reports.php"
-                    class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2 <?= ($currentPage == 'reports.php') ? 'active' : '' ?>">
-                    <i class="fa-solid w-6 flex justify-center fa-clipboard-list"></i>
-                    <span class="ft-medium">Reports</span>
-                </a>
+              
                 <a href="customers.php"
                     class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2 <?= ($currentPage == 'customers.php') ? 'active' : '' ?>">
                    <i class="fa-solid w-6 flex justify-center fa-user-group"></i>

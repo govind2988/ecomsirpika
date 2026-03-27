@@ -102,7 +102,9 @@ include '_header.php';
     
 
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold"><?=$pageTitle?> CMS Pages</h2>
+        <h2 class="text-2xl font-bold">
+            <!-- <?=$pageTitle?> CMS Pages -->
+        </h2>
         <div class="space-x-3">
             <a href="cms_list.php" class="bg-gray-600 text-white px-3 py-1 rounded view-btn">Back</a>
         </div>

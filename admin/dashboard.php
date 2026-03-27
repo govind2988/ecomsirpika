@@ -34,11 +34,7 @@ include '_header.php';
 
        <main class="p-6 mt-16 space-y-4">
 			<script src="https://cdn.tailwindcss.com"></script>
-            <div class="flex flex-col space-y-6 md:space-y-0 md:flex-row justify-between">
-                <div class="mr-6">
-                    <h1 class="text-3xl uppercase font-bold mb-2">Dashboard</h1>
-                </div>
-            </div>
+           
 
              <!-- Sales Data -->
 

@@ -50,11 +50,7 @@ include '_header.php';
 <main class="p-6 mt-16 space-y-4">
    
 
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Reports & Analytics</h2>
-       
-    </div>
-
+    
   
 
      <section class="grid md:grid-cols-2 gap-6">

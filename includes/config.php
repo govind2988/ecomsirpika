@@ -12,7 +12,7 @@ if ($env && is_array($env)) {
 }
 
 if (!defined('BASE_URL')) {
-    define('BASE_URL', $_ENV['BASE_URL'] ?? '/ecom06/');
+    define('BASE_URL', $_ENV['BASE_URL'] ?? '/ecomsirpika/');
 }
 	
 if (!defined('MERCHANT_UPI')) {

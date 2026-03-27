@@ -12,9 +12,7 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
 
 
 <main class="p-6 mt-16 space-y-4">
-    <div class="flex justify-between mb-4">
-        <h1 class="text-3xl font-bold">Contact Messages</h1>
-    </div>
+    
 
     <section class="overflow-x-auto bg-white shadow rounded-lg">
         <?php if ($res->num_rows > 0): ?>

@@ -19,9 +19,7 @@ include '_header.php';
 
 
 <main class="p-6 mt-16 space-y-4">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Customers</h2>
-    </div>
+    
 
     <section class="grid grid-cols-1 gap-6">
         <div class="flex flex-col md:col-span-2 md:row-span-2 bg-white shadow rounded-lg">                 

@@ -9,7 +9,7 @@ include '_header.php';
 
 <main class="p-6 mt-16 space-y-4">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">CMS Pages</h2>
+        <h2 class="text-2xl font-bold"></h2>
         <div class="space-x-3">           
             <a href="cms_edit.php" class="bg-primary text-white font-medium px-4 py-2 rounded">
                 + Create New Page

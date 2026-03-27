@@ -84,12 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
  <main class="p-6 mt-16 space-y-4">
 
-  <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold"> Site Settings</h2>
-        <div class="space-x-3">
-            <a href="cms_list.php" class="bg-gray-600 text-white px-3 py-1 rounded view-btn">Back</a>
-        </div>
-    </div>
 
 
  <section class="overflow-x-auto bg-white shadow rounded-lg p-4">
