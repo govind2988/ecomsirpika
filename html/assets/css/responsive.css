@@ -1,0 +1,269 @@
+@media only screen and (max-width: 1699px) {
+
+}
+
+@media only screen and (max-width: 1499px) {
+
+}
+
+@media only screen and (max-width: 1399px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 98%;
+    }
+}
+
+@media only screen and (max-width: 1299px) {
+    .nav-link{
+        font-size: 16px;
+    }
+    .logo img{
+        height: 100px;
+        top: -50px;
+    }
+    .header{
+        padding: 15px 0;
+    }
+    .bannerSlider .owl-item img{
+        height: 450px;
+    }
+    .bannerSlider {
+        height: 350px;
+    }
+    section {
+        margin: 40px 0;
+    }
+    .product-content .productList .col-md-3{
+        width: 25%;
+    }
+    .filter-button-group button{
+        padding: 10px 20px;
+    }
+    section.product-content{
+        margin-top: 30px;
+    }
+
+}
+
+
+@media only screen and (max-width: 1199px) {
+    .nav-link {
+        font-size: 15px;
+        padding: 0 15px;
+    }
+    .filter-button-group{
+        flex-wrap: wrap;
+    }
+}
+
+
+@media only screen and (max-width: 1099px) {  
+    .logo img{
+        height: 80px;
+        margin-left: -40px;
+    }
+}
+
+@media only screen and (max-width: 991px) {
+    body{
+        font-size: 14px;
+    }
+    .container, .container-md, .container-sm {
+        max-width:calc(100% - 40px);
+        padding: 0;
+    }
+    .deskMenu{
+        display: none;
+    }
+
+
+    .navbar-toggler {
+        display: block;
+        font-size: 28px;
+        color: #000;
+    }
+    .deskMenu{
+    display: none;
+    }
+
+#mobileMenu{
+position: fixed;
+width: 100%;
+top: 85px;
+left: 0;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 99;
+}
+
+#mobileMenu ul {
+    width: 100%;
+    flex-direction: column;
+    margin: 30px 0;
+    gap: 30px;
+    align-items: end;
+}
+.whatsappChat a span{
+display: none;
+}
+
+.logo{
+display: none;
+}
+.mobile_logo {
+display: block;
+margin-bottom: 0;
+padding: 0;
+}
+
+.whatsappChat{
+    display: flex;
+    gap: 30px;
+}
+
+.header{
+    padding: 10px 0;
+    padding-bottom: 5px;
+}
+
+.navbar{
+    margin: 0;
+    padding: 0;
+}
+
+
+#mobileMenu .nav-link{
+    color: #fff;
+    padding-right: 40px;
+}
+
+#mobileMenu .active a{
+    color: #FC673D;
+}
+
+.bannerSlider .owl-item img {
+    height: 350px;
+}
+
+.bannerSlider {
+    height: 300px;
+}
+
+h2.head{
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+.trendingProducts .item .content h2{
+    font-size: 20px;
+}
+.trendingProducts .item .content{
+    width: 60%;
+}
+
+.welcome-content .container{
+    width: 90%;
+}
+h1.head{
+    font-size: 20px;
+}
+p.price{
+    font-size: 20px;
+}
+.product-content .productList .col-md-3 {
+    width: 33.333%;
+}
+
+}
+
+@media only screen and (max-width: 767px) {
+    .products-section .left{
+        padding-right: 15px;
+        text-align: center;
+    }
+    .products-section .left img{
+        max-width: fit-content;
+    }
+    .trendingProducts .item{
+        margin-bottom: 20px;
+    }
+    .bannerSlider {
+        height: 380px;
+    }
+    .home-category .catItem{
+        width: 33.333%;
+    }
+    .trendingProducts .item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+    .youtubeVideo {
+        width: 100%;
+        height: 350px;
+    }
+    .products-section .right{
+        margin-top: 50px;
+    }
+    .why-millets-section .image-container img{
+        width: auto;
+        max-width: 100%;
+    }
+    .image-container{
+        text-align: center;
+    }
+    .why-millets-section .right-column{
+        text-align: left;
+    }
+    .instagram-section{
+        margin-top: 0;
+    }
+    .why-millets-section{
+        margin-bottom: 0;
+    }
+    .footer .text-start{
+        text-align: center !important;
+    }
+    ul.socialMedia{
+        justify-content: center;
+        margin-top: 20px;
+    }
+    h2.head.bgLeft{
+        background-position: top center;
+        text-align: center !important;
+    }
+    h2.head.bgLeft span{
+        display: block;
+    }
+    h2.head.bgLeft a{
+        float: none !important;
+        margin-top: 20px;
+    }
+    .product-content .productList .col-md-3 {
+        width: 50%;
+    }
+    .whatsAppOrder{
+        right: 30px;
+        bottom: 40px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .filter-button-group button{
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .home-category .catItem {
+        width:50%;
+    }
+    .product-content .productList .col-md-3 {
+        width: 100%;
+    }
+}
+
+
+@media only screen and (max-width: 420px) {
+
+}
+
+
