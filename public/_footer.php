@@ -4,6 +4,17 @@
     </footer>
 -->
 
+
+<div class="whatsAppOrder">
+    <span class="whatsapp-icon">
+      <a href="https://api.whatsapp.com/send?phone=+916381451509&amp;text=Hi Team, I would like order millet products can you share me more details."
+        target="_blank">
+        <img src="./assets/images/whatsapp_white.svg" alt="Sirpika Millets Online Order" />
+      </a>
+      <div class="sonar-wave sonar-wave1"></div>
+    </span>
+  </div>
+
 <footer class="bg-red-500 py-4 text-center mt-20">
   <div class="container mx-auto text-sm text-white flex flex-col sm:flex-row justify-between gap-4 items-center">
    

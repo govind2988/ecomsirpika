@@ -52,9 +52,21 @@ $cartCount = array_sum($_SESSION['cart'] ?? []);
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <!-- Bootstrap CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"/>
+  <!-- WOW/Animate CSS CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <!-- Use BASE_URL to ensure correct path -->
   <link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>assets/css/custom.css">
   <link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>assets/css/responsive.css">
+
+  
+  
+
+
+
+
+
 
 
 
@@ -99,8 +111,14 @@ if (!empty($settings['google_analytics'])) {
             <nav class="hidden md:flex space-x-10 uppercase">
               <a href="index.php" class="text-red-700 font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
               <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a>
-              <a href="contact.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Bulk Order</a>             
+              <a href="aboutus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
+              <a href="contactus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
+
+
+          
+
+
 
             <!-- Icons -->
             <div class="flex items-center space-x-4">
@@ -132,3 +150,6 @@ if (!empty($settings['google_analytics'])) {
         </div>
 
       </header>
+
+
+
