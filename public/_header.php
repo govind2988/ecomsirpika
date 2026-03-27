@@ -98,7 +98,7 @@ if (!empty($settings['google_analytics'])) {
             <!-- Menu -->
             <nav class="hidden md:flex space-x-10 uppercase">
               <a href="index.php" class="text-red-700 font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <a href="#onlineOrder" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a>
+              <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a>
               <a href="contact.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Bulk Order</a>             
             </nav>
 
