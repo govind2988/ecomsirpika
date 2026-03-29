@@ -952,9 +952,47 @@ header.headerSticky .logo img {
   
 }
 
+.fa-shopping-cart{
+   color: #181312;
+}
 
 
 .online-order {
    font-weight: 700;
+   border-radius: 30px;
 }
 
+.innerProductBanner{
+   position: relative;
+   margin: 0;
+   margin-bottom: 50px;
+   width: 100%;
+}
+
+.productFilter{
+   background: #FFF6EE;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: space-between;
+   gap: 20px;
+}
+
+.productFilter{
+   box-shadow: 0 3px 10px 5px rgba(100, 100, 100, 0.06);
+}
+
+
+
+ .Cathead{  
+   font-family: "Nunito Sans", sans-serif;
+   font-size: 32px;
+   color: #000;
+   text-transform: capitalize;
+ }
+
+ .youtubeBtn{
+   position: absolute;
+   top: 10px;
+   right: 10px;
+ }
