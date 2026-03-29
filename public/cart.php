@@ -1,5 +1,6 @@
 <?php
 session_start();
+header('Content-Type: text/html; charset=UTF-8');
 include_once 'settings.php';
 
 include_once __DIR__ . '/../includes/config.php';
@@ -20,16 +21,17 @@ $bShowCart = true;
 $showQrModal = false;
 $qrDataUri = '';
 $orderTotal = 0;
-$merchantUpi = $settings['upi_id'];
+$merchantUpi = MERCHANT_UPI;
 $merchantName = $settings['company_name'];
-$whNumber = $settings['whatsapp_no'];
+$whNumber = WHATSAPP_NO;
+$mode = ORDER_MODE;
 $order_id = 0;
 if (isset($_POST['place_order'])) {
     $captcha_input = strtoupper(trim($_POST['captcha_input'] ?? ''));
     $captcha_code = $_SESSION['captcha'] ?? '';
     $cart = $_SESSION['cart'];
-    $mode = $_POST['mode'] ?? 'traditional';
-
+  //  $mode = $_POST['mode'] ?? 'whatsapp';
+	
     if ($captcha_input !== $captcha_code) {
         $message = "❌ Invalid CAPTCHA.";
     } elseif (empty($cart)) {
@@ -65,20 +67,43 @@ if (isset($_POST['place_order'])) {
                           VALUES ($order_id,{$it['product_id']},{$it['quantity']},{$it['price']})");
         }
 
-        unset($_SESSION['cart'], $_SESSION['captcha']);
-		$_SESSION['cart'] = [];
-        $bShowCart = false;
+     //   unset($_SESSION['cart'], $_SESSION['captcha']);
+	 //	$_SESSION['cart'] = [];
+     //   $bShowCart = false;
 		
-        $orderTotal = $total + $settings['shipping_charges']; // include shipping if desired
+     //   $orderTotal = $total + $settings['shipping_charges']; // include shipping if desired
+		$orderTotal = $total;
 
-        if ($mode === 'whatsapp') {
-            $msg = "🛒 Order Details:%0A";
-            foreach ($order_items as $it) {
-                $msg .= "{$it['product_name']} (x{$it['quantity']}) - ₹".($it['price']*$it['quantity'])."%0A";
-            }
-            $encoded = urlencode("Hi, I placed an order.%0A%0A$name%0A$phone%0A$address%0A%0A".$msg);
-            header("Location: https://wa.me/$whNumber?text=$encoded"); exit;
-        } else {
+       if ($mode === 'whatsapp') {
+
+		// Build clean message (NO %0A here)		
+		$msg = "*New Order Received*\n\n";
+		
+		$msg .= "Order ID: #{$order_id}\n\n";
+
+		$msg .= "Name: $name\n";
+		$msg .= "Phone: $phone\n";
+		$msg .= "Email: $email\n";
+		$msg .= "Address: $address\n\n";
+
+		$msg .= "*Order Items:*\n";
+
+		foreach ($order_items as $it) {
+			$lineTotal = $it['price'] * $it['quantity'];
+			$msg .= "• {$it['product_name']} (x{$it['quantity']}) - ₹{$lineTotal}\n";
+		}
+
+
+		$msg .= "\n\n Payment: WhatsApp Order";
+
+		$msg .= "Total: Rs {$orderTotal}";
+
+		$encoded = rawurlencode($msg);
+
+		header("Location: https://wa.me/$whNumber?text=$encoded");
+		exit;
+		
+		} else {
             $message = "✅ Order placed successfully!";
 			
 			// Build QR Code
@@ -195,7 +220,8 @@ include_once '_header.php';
         <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
         <?php
           $itemCount = array_sum(array_column($cartItems, 'quantity'));
-          $shipping = $total > 0 ? $settings['shipping_charges'] : 0;
+        //  $shipping = $total > 0 ? $settings['shipping_charges'] : 0;
+		  $shipping = 0;
           $orderTotal = $total + $shipping;
         ?>
         <div class="flex justify-between py-2 border-b">
@@ -306,7 +332,8 @@ include_once '_header.php';
 </main>
 <script>
   
-  var shippingCharges = <?=$settings['shipping_charges']?>
+ 
+  var shippingCharges = 0;
   
   function changeQty(cartId, delta) {
     const input = document.getElementById('qty-' + cartId);

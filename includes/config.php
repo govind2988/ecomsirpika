@@ -21,3 +21,6 @@ if (!defined('MERCHANT_UPI')) {
 if (!defined('WHATSAPP_NO')) {
     define('WHATSAPP_NO', $_ENV['WHATSAPP_NO'] ?? '');
 }
+if (!defined('ORDER_MODE')) {
+    define('ORDER_MODE', $_ENV['ORDER_MODE'] ?? 'traditional');
+}
