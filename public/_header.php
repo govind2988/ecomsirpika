@@ -81,11 +81,11 @@ if (!empty($settings['google_analytics'])) {
 </head>
 
 
-<body class="bg-yellow-50 flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen">
 
-      <div class="w-full bg-red-500 text-yellow-400 py-1 overflow-hidden">                
-         <div class="whitespace-nowrap animate-marquee text-center font-semibold text-lg">         
-            <?echo $settings['header_message']?>
+      <div class="marquee-container w-full bg-white text-primary py-1 overflow-hidden shadow-md  relative">                
+         <div class="whitespace-nowrap marquee-text text-center font-semibold text-sm">         
+            <?php echo $settings['header_message']?>
          </div>            
       </div>
 
@@ -93,24 +93,12 @@ if (!empty($settings['google_analytics'])) {
       <header class="sticky top-0 z-30 bg-white shadow-md">
                  
       <div class="container mx-auto flex items-center justify-between px-4">
-            <!-- Logo -->           
-            <div class="flex items-center space-x-2">
-              <a href="index.php" class="flex items-center gap-2">
-			   <?php if (!empty($settings['logo'])): ?>
-					  <span class="text-2xl font-bold text-red-700">
-						   <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo" class="h-20 mx-auto sm:mx-0">
-					  </span>
-				<?php else: ?>
-					<h1 class="text-xl font-bold text-gray-700"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
-					</h1>
-				<?php endif; ?>
-              </a>
-            </div>
+           
                        
             <!-- Menu -->
             <nav class="hidden md:flex space-x-10 uppercase">
-              <a href="index.php" class="text-red-700 font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a>
+              <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
+              <!-- <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a> -->
               <a href="aboutus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
               <a href="contactus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
@@ -125,21 +113,45 @@ if (!empty($settings['google_analytics'])) {
               <!-- Cart Icon -->                              
                <div class="relative mr-4">
                  <a href="cart.php">
-                   <i class="fa fa-shopping-cart text-2xl text-red-600"></i>
+                   <i class="fa fa-shopping-cart text-2xl text-pri"></i>
                     <?php if (isset($cartCount) && $cartCount > 0): ?>
                       <span class="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5"><?= $cartCount ?></span>
                     <?php endif; ?>
                   </a>
                </div>
             <!-- WhatsApp Icon -->                
-              <a href="https://wa.me/<?= htmlspecialchars($settings['whatsapp_no']) ?>" target="_blank" class="text-green-600 text-4xl hover:text-green-700">
+              <!-- <a href="https://wa.me/<?= htmlspecialchars($settings['whatsapp_no']) ?>" target="_blank" class="text-green-600 text-4xl hover:text-green-700">
                   <i class="fab fa-whatsapp"></i>
+              </a> -->
+
+              <a class="online-order btn btn-primary text-uppercase" href="products.php">
+                   Online Order
               </a>
+
               <!-- Mobile Menu Button -->
               <button class="md:hidden text-red-600 text-2xl focus:outline-none" id="mobile-menu-btn">
                   <i class="fa fa-bars"></i>
               </button>
             </div>
+
+
+
+             <!-- Logo -->           
+            <div class="logo text-center position-absolute start-0 container-fluid">
+              <a href="index.php" class="flex items-center gap-2">
+              <?php if (!empty($settings['logo'])): ?>
+                  <span class="text-2xl font-bold text-red-700 m-auto">
+                    <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo">
+                  </span>
+              <?php else: ?>
+                <h1 class="text-xl font-bold text-gray-700"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
+                </h1>
+              <?php endif; ?>
+                    </a>
+            </div>
+
+
+
 
              <!-- Mobile Menu -->
          <div class="md:hidden hidden px-4 pb-3" id="mobile-menu">
@@ -150,6 +162,19 @@ if (!empty($settings['google_analytics'])) {
         </div>
 
       </header>
+
+      <script>
+        // Add headerSticky class on scroll
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 0) {
+            header.classList.add('headerSticky');
+          } else {
+            header.classList.remove('headerSticky');
+          }
+        });
+      </script>
 
 
 

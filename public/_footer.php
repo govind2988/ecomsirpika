@@ -15,7 +15,7 @@
     </span>
   </div>
 
-<footer class="bg-red-500 py-4 text-center mt-20">
+<footer class="bg-gray-800 py-4 text-center mt-20">
   <div class="container mx-auto text-sm text-white flex flex-col sm:flex-row justify-between gap-4 items-center">
    
 

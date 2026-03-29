@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Rokkitt:ital,wght@0,100..900;1,100..900&display=swap');
 
+
 body{
     font-size: 16px;
     padding: 0;
@@ -23,6 +24,7 @@ section{
    position: relative;
    z-index: 9;
    margin: 0;
+   margin-top: -100px;
  }
 
  .home-category .catItem{
@@ -36,6 +38,7 @@ section{
  .home-category .catItem img{
    border-radius: 50%;
    border: #fff solid 5px;
+   margin: auto;
  }
  .home-category .catItem h2{
    font-size: 20px;
@@ -117,6 +120,7 @@ section{
     z-index: 9;
     top: -65px;
     margin-left: -100px;
+     transition: all 0.3s ease;
  }
 
  .bannerSlider .owl-item img{
@@ -212,6 +216,8 @@ h1.head{
 .youtubeVideo{
    width: 80%;
    height: 500px;
+   margin: auto;
+   margin-top: 30px;
 }
 
 .left-column,
@@ -240,22 +246,18 @@ h1.head{
 }
 
 .btn-primary{
-   background: #fff;
+   background: linear-gradient(to right, #FC673D, #f75b30);
    border: #FC673D solid 1px;
-   color: #FC673D;
-   text-transform: capitalize;
+   color: #fff;
+   font-weight: 500;
+   position: relative;
    padding: 10px 25px;
+   outline: none;
 }
 
 .btn-primary:hover, .btn-primary:focus{
-   background: #1ABC9C;
-   border: #1ABC9C solid 1px;
-   color: #fff;
-}
-
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active{
-   background: #1ABC9C;
-   border: #1ABC9C solid 1px;
+   background: linear-gradient(to right, #fd5c30, #FC673D);
+   border: #FC673D solid 1px;
    color: #fff;
 }
 
@@ -312,6 +314,10 @@ p.price span{
 
 .why-millets-section .right-column{
    text-align: right;
+}
+
+.why-millets-section .content p{
+   margin-bottom: 20px;
 }
 
 .instagram-section{
@@ -728,7 +734,7 @@ figure {
 }
 
 .whatsAppOrder::after{
-   content: "Online Order";
+   content: "Bulk Order";
    position: absolute;
    display: block;
    left: -15px;
@@ -888,6 +894,14 @@ ul.productTab li.active, ul.productTab li:hover{
    color: #FC673D;
 }
 
+.text-primary{
+   color: #FC673D !important;
+}
+
+.bg-primary{
+   background: #FC673D !important;
+}
+
 
 .homeBanner{
    margin: 0;
@@ -899,11 +913,48 @@ ul.productTab li.active, ul.productTab li:hover{
 }
 
 
+/* Marquee Animation */
+@keyframes marquee {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
+
+
+.marquee-container {
+  overflow: hidden; /* Hide text when it moves outside the box */
+  white-space: nowrap; /* Keep text on a single line */
+}
+
+.marquee-text {
+  display: inline-block;
+  padding-left: 100%; /* Start the text off-screen to the right */
+  animation: scroll-left 20s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); } /* Move entirely to the left */
+}
+
+
+header.headerSticky .logo img {
+   height: 85px;
+   top: -30px;
+   transition: all 0.3s ease;
+  
+}
 
 
 
-
-
-
-
+.online-order {
+   font-weight: 700;
+}
 

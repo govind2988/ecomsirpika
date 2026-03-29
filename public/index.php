@@ -84,6 +84,57 @@ include '_header.php';
   </section>
 
 
+    <section class="trendingProducts">
+    <div class="container">
+      <h2 class="head">Trending Products</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="item">
+            <img src="assets/images/KarunguruvaiFlakes.png" alt="Sirpika Millets" />
+            <div class="content">
+              <h2>Karunguruvai Flakes</h2>
+              <p>
+                High Protein <br />
+                Hight Fiber<br />
+                No Chemicals
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="item">
+            <img src="assets/images/TangaSamba.png" alt="Sirpika Millets" />
+            <div class="content">
+              <h2>Tanga Samba</h2>
+              <p>
+                Energy<br />
+                Immunity<br />
+                Heart health
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="item">
+            <img src="assets/images/FlakesHoneyMuseli.png" alt="Sirpika Millets" />
+            <div class="content">
+              <h2>Flakes Honey Museli</h2>
+              <p>
+                Rich Protein <br />
+                Hight Fiber<br />
+                Multi Grains Content
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- Welcome Content -->
   <section class="welcome-content text-center">
     <div class="container">
@@ -127,45 +178,6 @@ include '_header.php';
           </h2>
 
           <div id="productSlider" class="owl-carousel owl-theme productList">
-
-
-
-
-             
-          <!-- <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/products/museli/SugarFreeMuseli.png" title="250g - ₹110.00">
-                  <img src="assets/images/products/museli/SugarFreeMuseli.png" alt="Sirpika Millets" />
-                </a>
-
-              </figure>
-            </div>
-            <div class="content">
-              <h2>Sugar Free Museli</h2>
-              <p class="weight">250g</p>
-              <p class="price">110.00 <span>150.00</span></p>
-            </div>
-          </div>
-       
-
-       
-          <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/products/museli/HoneyMuesli.png" title="250g - ₹110.00">
-                  <img src="assets/images/products/museli/HoneyMuesli.png" alt="Sirpika Millets" />
-                </a>
-
-              </figure>
-            </div>
-            <div class="content">
-              <h2>Honey Muesli</h2>
-              <p class="weight">250g</p>
-              <p class="price">110.00 <span>150.00</span></p>
-            </div>
-          </div> -->
-       
 
        
           <div class="item">
@@ -346,12 +358,59 @@ include '_header.php';
 
 <script>
 $(document).ready(function () {
-  $('.owl-carousel').owlCarousel({
+  // Home Banner Slider - Full width, 1 item
+  $('.homeBanner .owl-carousel').owlCarousel({
     items: 1,
     loop: true,
     autoplay: true,
     autoplayTimeout: 4000,
-    dots: true
+    dots: false,
+    nav: true,
+    navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+    
+  });
+
+  // Product Slider - Multiple items visible
+  $('#productSlider').owlCarousel({
+    items: 1,
+    loop: true,
+    autoplay: true,
+    autoplayTimeout: 5000,
+    dots: true,
+    nav: true,
+    navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+    responsive: {
+      480: {
+        items: 1
+      },
+      768: {
+        items: 2
+      },
+      992: {
+        items: 3
+      }
+    }
+  });
+
+  // Instagram Slider - Multiple items visible
+  $('#instaSlider').owlCarousel({
+    items: 4,
+    loop: true,
+    autoplay: false,
+    autoplayTimeout: 4000,
+    dots: true,
+    nav: false,
+    responsive: {
+      480: {
+        items: 2
+      },
+      768: {
+        items: 3
+      },
+      992: {
+        items: 4
+      }
+    }
   });
 });
 </script>
