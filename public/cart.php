@@ -67,9 +67,9 @@ if (isset($_POST['place_order'])) {
                           VALUES ($order_id,{$it['product_id']},{$it['quantity']},{$it['price']})");
         }
 
-     //   unset($_SESSION['cart'], $_SESSION['captcha']);
-	 //	$_SESSION['cart'] = [];
-     //   $bShowCart = false;
+        unset($_SESSION['cart'], $_SESSION['captcha']);
+	 	$_SESSION['cart'] = [];
+        $bShowCart = false;
 		
      //   $orderTotal = $total + $settings['shipping_charges']; // include shipping if desired
 		$orderTotal = $total;
