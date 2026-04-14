@@ -141,8 +141,7 @@ include '_header.php';
 
                              <span class="text-lg text-green-700 font-medium <?= $cartQty > 0 ? '' : 'hidden' ?>" id="ordered_value_<?= $productId ?>">
                                 Total: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
-                            </span>
-                            
+                            </span>                            
                            
                         </div>
 
