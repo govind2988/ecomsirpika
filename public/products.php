@@ -3,6 +3,7 @@ session_start();
 include './../includes/db.php';
 $conn = getDbConnection();
 
+
 // ✅ Updated category map safely
 $categoryMap = [];
 $catRes = $conn->query("SELECT id, name FROM categories");
@@ -201,6 +202,7 @@ function adjustQty(id, delta) {
 }
 
 // Update cart and UI
+
 function updateCart(productId) {
   const qty = parseInt(document.getElementById('qty_' + productId).value) || 0;
   const price = parseFloat(document.getElementById('price_' + productId).textContent) || 0;
@@ -234,14 +236,15 @@ function updateCart(productId) {
 }
 
 // Update the cart count badge in header
+
 function updateCartCount(count) {
-  const cartLink = document.querySelector(".relative");
-  let badge = cartLink.querySelector("span");
+  const cartLink = document.querySelector(".relative a"); // target <a> inside .relative
+  let badge = cartLink.querySelector(".cart-badge"); // use specific class
 
   if (count > 0) {
     if (!badge) {
       badge = document.createElement("span");
-      badge.className = "absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2";
+      badge.className = "cart-badge absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5";
       cartLink.appendChild(badge);
     }
     badge.textContent = count;
@@ -251,25 +254,65 @@ function updateCartCount(count) {
 }
 
 // Search + Category Filter
+
 function filterProducts() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const selectedCategory = document.getElementById("categoryFilter").value;
+
   const cards = document.querySelectorAll(".product-card");
+  const categoryVisibility = {}; // track visible products per category
 
   let hasVisibleProducts = false;
 
+  // Step 1: Filter products
   cards.forEach(card => {
     const productName = card.querySelector("h2")?.textContent.toLowerCase() || "";
     const catId = card.getAttribute("data-category-id");
-    const match = productName.includes(input) && (!selectedCategory || selectedCategory === catId);
-    
+
+    const match =
+      productName.includes(input) &&
+      (!selectedCategory || selectedCategory === catId);
+
     if (match) {
       card.style.display = "block";
+      categoryVisibility[catId] = true; // mark category as visible
       hasVisibleProducts = true;
     } else {
       card.style.display = "none";
     }
   });
+
+  // Step 2: Hide/Show category headers
+  const headers = document.querySelectorAll(".Cathead");
+
+  headers.forEach(header => {
+    // Find category id by checking next products
+    let parent = header.closest("div");
+    let nextCards = parent.parentElement.querySelectorAll(".product-card");
+
+    let visible = false;
+
+    nextCards.forEach(card => {
+      if (card.style.display !== "none") {
+        visible = true;
+      }
+    });
+
+    header.parentElement.style.display = visible ? "block" : "none";
+  });
+
+  // Step 3: No products message
+  let noMsg = document.getElementById("noProductsMsg");
+
+  if (!noMsg) {
+    noMsg = document.createElement("div");
+    noMsg.id = "noProductsMsg";
+    noMsg.className = "text-center text-red-600 text-lg font-semibold my-6";
+    noMsg.innerText = "No products found matching your search.";
+    document.getElementById("productGrid").appendChild(noMsg);
+  }
+
+  noMsg.style.display = hasVisibleProducts ? "none" : "block";
 }
 // Image modal logic
 function openImageModal(src) {
