@@ -400,22 +400,23 @@ include_once '_header.php';
     });
   });
   
-  // Update the cart count badge in header
-  function updateCartCount(count) {
-  const cartLink = document.querySelector(".relative");
-  let badge = cartLink.querySelector("span");
+ // Update the cart count badge in header
 
-	if (count > 0) {
-		if (!badge) {
-		  badge = document.createElement("span");
-		  badge.className = "absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2";
-		  cartLink.appendChild(badge);
-		}
-		badge.textContent = count;
-		} else if (badge) {
-		badge.remove();
-		}
-	}
+function updateCartCount(count) {
+  const cartLink = document.querySelector(".relative a"); // target <a> inside .relative
+  let badge = cartLink.querySelector(".cart-badge"); // use specific class
+
+  if (count > 0) {
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "cart-badge absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5";
+      cartLink.appendChild(badge);
+    }
+    badge.textContent = count;
+  } else if (badge) {
+    badge.remove();
+  }
+}
 
    function closeQrModal(orderID) {
     const modal = document.getElementById('qrModal');
