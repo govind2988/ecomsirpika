@@ -114,6 +114,10 @@ section{
    color: #FC673D;
  }
 
+ .logo{
+   position: absolute;
+   z-index: 9;
+ }
 
  .logo img{
     position: absolute;
@@ -214,7 +218,7 @@ h1.head{
 }
 
 .youtubeVideo{
-   width: 80%;
+   width: 800px;
    height: 500px;
    margin: auto;
    margin-top: 30px;
@@ -908,7 +912,7 @@ ul.productTab li.active, ul.productTab li:hover{
 }
 
 .homeBanner .owl-item img{
-   height: 600px;
+   height: 500px;
    object-fit: cover;
 }
 
@@ -948,19 +952,28 @@ ul.productTab li.active, ul.productTab li:hover{
 header.headerSticky .logo img {
    height: 85px;
    top: -30px;
-   transition: all 0.3s ease;
-  
+   transition: all 0.3s ease;  
 }
 
 .fa-shopping-cart{
-   color: #181312;
+   color: #333;
+}
+
+.fa-shopping-cart:hover{
+   color: #FC673D;
 }
 
 
-.online-order {
+a.online-order {
    font-weight: 700;
    border-radius: 30px;
 }
+
+a.online-order:hover{
+   color: #facc15;
+}
+
+
 
 .innerProductBanner{
    position: relative;
@@ -983,8 +996,7 @@ header.headerSticky .logo img {
 }
 
 
- .Cathead{  
-   font-family: "Nunito Sans", sans-serif;
+ .cathead{  
    font-size: 32px;
    color: #000000;
    text-transform: capitalize;
@@ -995,3 +1007,25 @@ header.headerSticky .logo img {
    top: 10px;
    right: 10px;
  }
+
+.container {
+   width: 100%;
+    max-width: 1400px !important;
+}
+
+.mobileViewMenu{
+   position: fixed;
+   top: 0;
+   z-index: 99;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0,0,0,0.8);
+   box-shadow: 0 3px 10px 5px rgba(100, 100, 100, 0.06);
+}
+
+a.mm_closebtn{
+   z-index: 99999;
+   position:relative;
+   top: 20px;
+}

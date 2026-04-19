@@ -64,12 +64,6 @@ $cartCount = array_sum($_SESSION['cart'] ?? []);
   
 
 
-
-
-
-
-
-
 <?php
 // Output Google Analytics code as raw HTML (not escaped)
 if (!empty($settings['google_analytics'])) {
@@ -94,11 +88,28 @@ if (!empty($settings['google_analytics'])) {
                  
       <div class="container mx-auto flex items-center justify-between px-4">
            
+
+       <!-- Logo -->           
+            <div class="logo text-center start-0 container-fluid">
+              <a href="index.php" class="flex items-center gap-2">
+              <?php if (!empty($settings['logo'])): ?>
+                  <span class="text-2xl font-bold text-red-700 m-auto">
+                    <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo">
+                  </span>
+              <?php else: ?>
+                <h1 class="text-xl font-bold text-gray-700"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
+                </h1>
+              <?php endif; ?>
+                    </a>
+            </div>
+
+
+
                        
             <!-- Menu -->
-            <nav class="hidden md:flex space-x-10 uppercase">
+            <nav class="hidden lg:flex space-x-6 uppercase deskMenu">
               <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <!-- <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Online Order</a> -->
+              <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
               <a href="aboutus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
               <a href="contactus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
@@ -114,56 +125,70 @@ if (!empty($settings['google_analytics'])) {
                <div class="relative mr-4">
                  <a href="cart.php">
                    <i class="fa fa-shopping-cart text-2xl text-pri"></i>
+
                     <?php if (isset($cartCount) && $cartCount > 0): ?>
                       <span class="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5"><?= $cartCount ?></span>
                     <?php endif; ?>
                   </a>
                </div>
-            <!-- WhatsApp Icon -->                
-              <!-- <a href="https://wa.me/<?= htmlspecialchars($settings['whatsapp_no']) ?>" target="_blank" class="text-green-600 text-4xl hover:text-green-700">
-                  <i class="fab fa-whatsapp"></i>
-              </a> -->
+           
 
               <a class="online-order btn btn-primary text-uppercase" href="products.php">
                    Online Order
               </a>
 
               <!-- Mobile Menu Button -->
-              <button class="md:hidden text-red-600 text-2xl focus:outline-none" id="mobile-menu-btn">
+              <button class="lg:hidden text-red-600 text-2xl focus:outline-none" id="mobile-menu-btn">
                   <i class="fa fa-bars"></i>
               </button>
             </div>
 
 
 
-             <!-- Logo -->           
-            <div class="logo text-center position-absolute start-0 container-fluid">
-              <a href="index.php" class="flex items-center gap-2">
-              <?php if (!empty($settings['logo'])): ?>
-                  <span class="text-2xl font-bold text-red-700 m-auto">
-                    <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo">
-                  </span>
-              <?php else: ?>
-                <h1 class="text-xl font-bold text-gray-700"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
-                </h1>
-              <?php endif; ?>
-                    </a>
-            </div>
-
-
-
-
              <!-- Mobile Menu -->
-         <div class="md:hidden hidden px-4 pb-3" id="mobile-menu">
-          <a href="#" class="block py-2 text-red-700 font-medium">Home</a>
-          <a href="#" class="block py-2 text-red-700 font-medium">Categories</a>
-          <a href="#" class="block py-2 text-red-700 font-medium">Offers</a>
-          <a href="contact.php" class="block py-2 text-red-700 font-medium">Contact</a>
+         <div class="hidden px-4 pb-3 mobileViewMenu" id="mobile-menu">
+                      
+         <nav class="flex flex-column uppercase">
+              <i class="fa fa-times text-2xl text-right mb-4 cursor-pointer mm_closebtn" id="mobile-menu-close"></i>
+              <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-3">Home</a>
+              <a href="products.php" class="text-white font-medium border-b border-gray-300 hover:border-yellow-400 py-6">Products</a>
+              <a href="aboutus.php" class="text-white font-medium border-b border-gray-300  hover:border-yellow-400 py-6">About Us</a>
+              <a href="contactus.php" class="text-white font-medium border-b border-gray-300  hover:border-yellow-400 py-6">Contact Us</a>
+            </nav>
+
         </div>
 
       </header>
 
       <script>
+        // Mobile menu toggle functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuCloseBtn = document.getElementById('mobile-menu-close');
+        
+        if (mobileMenuBtn && mobileMenu) {
+          mobileMenuBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileMenu.classList.toggle('hidden');
+          });
+          
+          // Close mobile menu when close button is clicked
+          if (mobileMenuCloseBtn) {
+            mobileMenuCloseBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              mobileMenu.classList.add('hidden');
+            });
+          }
+          
+          // Close mobile menu when a link is clicked
+          const mobileLinks = mobileMenu.querySelectorAll('a');
+          mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+              mobileMenu.classList.add('hidden');
+            });
+          });
+        }
+        
         // Add headerSticky class on scroll
         const header = document.querySelector('header');
         

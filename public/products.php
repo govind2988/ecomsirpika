@@ -283,7 +283,7 @@ function filterProducts() {
   });
 
   // Step 2: Hide/Show category headers
-  const headers = document.querySelectorAll(".Cathead");
+  const headers = document.querySelectorAll(".cathead");
 
   headers.forEach(header => {
     // Find category id by checking next products

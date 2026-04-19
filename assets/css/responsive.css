@@ -7,17 +7,19 @@
 }
 
 @media only screen and (max-width: 1399px) {
-    .container, .container-lg, .container-md, .container-sm, .container-xl {
-        max-width: 98%;
-    }
+    
 }
 
 @media only screen and (max-width: 1299px) {
+     .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 98%;
+        width:98%
+    }
     .nav-link{
-        font-size: 16px;
+        font-size: 14px;
     }
     .logo img{
-        height: 100px;
+        height: 110px;
         top: -50px;
     }
     .header{
@@ -57,13 +59,41 @@
 
 
 @media only screen and (max-width: 1099px) {  
-    .logo img{
-        height: 80px;
-        margin-left: -40px;
+   
+   .logo img{
+        height: 100px;
+        top: -30px;
+        margin-left: -50px;
     }
 }
 
-@media only screen and (max-width: 991px) {
+@media only screen and (max-width: 1023px) {
+
+  .logo{
+   position: relative;
+   width: 100px;
+   margin-left: -20px;
+   z-index: 9;
+ }
+
+    .logo img{
+        position: relative;
+        height: 60px;
+        top: 0px;
+        margin: 0px !important;
+    }
+    a.online-order{
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    header.headerSticky .logo img {
+       height: 60px;
+        top: 0px;
+        transition: all 0.3s ease;  
+    }
+
+
     body{
         font-size: 14px;
     }
@@ -81,9 +111,7 @@
         font-size: 28px;
         color: #000;
     }
-    .deskMenu{
-    display: none;
-    }
+   
 
 #mobileMenu{
 position: fixed;
@@ -106,14 +134,9 @@ z-index: 99;
 display: none;
 }
 
-.logo{
-display: none;
-}
-.mobile_logo {
-display: block;
-margin-bottom: 0;
-padding: 0;
-}
+
+
+
 
 .whatsappChat{
     display: flex;
@@ -172,6 +195,32 @@ p.price{
     width: 33.333%;
 }
 
+.marquee-container{   
+    border-bottom: 1px solid #ddd;
+}
+
+.headerSticky{
+    position: relative !important;
+}
+
+.homeBanner .owl-item img{
+    height: 300px;
+}
+
+.home-category{
+    margin-top: -60px;
+}
+.home-category .catItem{
+    width: 20%;
+}
+
+}
+
+@media only screen and (max-width: 991px) {
+     .youtubeVideo {
+        width: 100%;
+        height: 400px;
+    }
 }
 
 @media only screen and (max-width: 767px) {
@@ -188,18 +237,13 @@ p.price{
     .bannerSlider {
         height: 380px;
     }
-    .home-category .catItem{
-        width: 33.333%;
-    }
+   
     .trendingProducts .item img {
         width: 100%;
         height: 250px;
         object-fit: cover;
     }
-    .youtubeVideo {
-        width: 100%;
-        height: 350px;
-    }
+   
     .products-section .right{
         margin-top: 50px;
     }
@@ -247,17 +291,38 @@ p.price{
 }
 
 @media only screen and (max-width: 640px) {
+    section{
+        padding: 20px;
+        margin: 0;
+    }
     .filter-button-group button{
         font-size: 12px;
     }
-}
-
-@media only screen and (max-width: 575px) {
+     .youtubeVideo {
+        width: 100%;
+        height: 300px;
+    }
+    a.online-order{
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    .home-category .catItem h2{
+        font-size: 16px;
+    }
+    
     .home-category .catItem {
         width:50%;
+        margin-bottom: 30px;
     }
     .product-content .productList .col-md-3 {
         width: 100%;
+    }
+    h2.head{
+        margin: 10px;
+        font-size: 24px;
+    }
+    .home-category{
+        margin-top: 0px;
     }
 }
 
@@ -265,5 +330,4 @@ p.price{
 @media only screen and (max-width: 420px) {
 
 }
-
 
