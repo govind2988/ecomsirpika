@@ -65,6 +65,20 @@
   </div>
 </footer>
 
+<!-- Colorbox JS -->
+<script src="<?= htmlspecialchars(BASE_URL) ?>assets/vendor/colobox/js/jquery.colorbox-min.js"></script>
+<script>
+  $(document).ready(function(){
+    $(".popup").colorbox({
+      rel: 'popup',
+      transition: 'fade',
+      maxWidth: '95%',
+      maxHeight: '95%',
+      opacity: 0.9,
+      scrolling: false
+    });
+  });
+</script>
 
 </body>
 </html>

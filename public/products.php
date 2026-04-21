@@ -33,6 +33,24 @@ include '_header.php';
 
 <!-- Product Section -->
 <section class="productsList mt-0" id="onlineOrder">
+
+
+    <div class="categoryMenu filter-button-group button-group mt-4 js-radio-button-group">
+        <button class="button is-checked" data-filter="*">All</button>
+        <?php 
+        // Fetch all categories and generate filter buttons dynamically
+        $categoryQuery = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
+        while ($catButton = $categoryQuery->fetch_assoc()): 
+            $catId = $catButton['id'];
+            $catName = htmlspecialchars($catButton['name']);
+        ?>
+        <button class="button" data-filter="[data-category-id='<?= $catId ?>']"><?= $catName ?></button>
+        <?php endwhile; ?>
+      </div>
+
+
+
+
     <div class="container mx-auto"> 
         <!-- Search and Category Filter -->
         <div class="productFilter w-full mb-8 p-6 bg-white">
