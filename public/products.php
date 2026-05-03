@@ -36,7 +36,7 @@ include '_header.php';
 
 
     <div class="categoryMenu filter-button-group button-group mt-4 js-radio-button-group">
-        <button class="button is-checked" data-filter="*">All</button>
+        <button class="button is-checked category-btn" data-filter="*" data-category-id="all">All</button>
         <?php 
         // Fetch all categories and generate filter buttons dynamically
         $categoryQuery = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
@@ -44,7 +44,7 @@ include '_header.php';
             $catId = $catButton['id'];
             $catName = htmlspecialchars($catButton['name']);
         ?>
-        <button class="button" data-filter="[data-category-id='<?= $catId ?>']"><?= $catName ?></button>
+        <button class="button category-btn" data-filter="[data-category-id='<?= $catId ?>']" data-category-id="<?= $catId ?>"><?= $catName ?></button>
         <?php endwhile; ?>
       </div>
 
@@ -53,13 +53,13 @@ include '_header.php';
 
     <div class="container mx-auto"> 
         <!-- Search and Category Filter -->
-        <div class="productFilter w-full mb-8 p-6 bg-white">
+        <div class="productFilter mb-8 p-0 bg-white shadow-md rounded-full">
             <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 search-filters">
                 <!-- Search Input -->
                 <div class="w-full sm:w-3/5 relative">
                     <input 
                         id="searchInput" 
-                        class="search w-full py-3 pl-10 border-1 border-gray-100 rounded-lg focus:outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200 transition-all duration-200 placeholder-gray-500 text-gray-700" 
+                        class="search w-full py-3 pl-10 border-1 border-none rounded-full focus:outline-none  transition-all duration-200 placeholder-gray-500 text-gray-700" 
                         placeholder="Search products..."  
                         onkeyup="filterProducts()">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -69,7 +69,7 @@ include '_header.php';
                 <div class="w-full sm:w-2/5 relative">
                     <select 
                         id="categoryFilter" 
-                        class="w-full px-4 py-3 pl-4 pr-10 border-1 border-gray-100 rounded-lg bg-white text-gray-700 focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-200 transition-all duration-200 appearance-none cursor-pointer font-medium" 
+                        class="w-full px-4 py-3 pl-4 pr-10 border-1 border-gray-100 rounded-full bg-white text-gray-700 focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-300 transition-all duration-200 appearance-none cursor-pointer font-medium" 
                         onchange="filterProducts()">
                         <option value="">All Categories</option>
                         <?php while($cat = $catRes->fetch_assoc()): ?>
@@ -82,7 +82,7 @@ include '_header.php';
         </div>
 
         <!-- Products Grid -->
-        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
             <?php
             $catQuery = $conn->query("SELECT DISTINCT category_id FROM products ORDER BY category_id ASC");
             $isCategoryFirst = true;
@@ -95,13 +95,13 @@ include '_header.php';
                     if (!$isCategoryFirst):
             ?>
         </div>
-        <div id="productGrid-<?= $categoryID ?>" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <div id="productGrid-<?= $categoryID ?>" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6 mt-8">
             <div class="col-span-full mt-4">
-                <h2 class="Cathead"><?= htmlspecialchars($categoryName) ?></h2>
+                <h2 class="cathead"><?= htmlspecialchars($categoryName) ?></h2>
             </div>
             <?php else: ?>
             <div class="col-span-full mt-4">
-                <h2 class="Cathead"><?= htmlspecialchars($categoryName) ?></h2>
+                <h2 class="cathead"><?= htmlspecialchars($categoryName) ?></h2>
             </div>
             <?php 
                     $isCategoryFirst = false;
@@ -149,18 +149,18 @@ include '_header.php';
                         <?php endif; ?>
 
                         <!-- Price Section -->
-                        <div class="mb-3 flex items-start gap-2">
+                      
 
-                        <div class="pricing">
-                            <?php if ($rrp > $basePrice): ?>
-                            <span class="text-sm text-gray-500 line-through mr-2">₹<?= number_format($rrp, 2) ?></span>
-                            <?php endif; ?>
+                        <div class="pricing">                           
                             
                             <span class="text-red-600 font-bold text-xl">₹<span id="price_<?= $row['id'] ?>"><?= number_format($basePrice, 2) ?></span></span>
-
-                             <span class="text-lg text-green-700 font-medium <?= $cartQty > 0 ? '' : 'hidden' ?>" id="ordered_value_<?= $productId ?>">
-                                Total: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
-                            </span>                            
+                             <?php if ($rrp > $basePrice): ?>
+                            <span class="text-sm text-gray-400 line-through mr-2">₹<?= number_format($rrp, 2) ?></span>
+                            <?php endif; ?>
+<br>
+                             <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
+                                Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
+                            </div>                            
                            
                         </div>
 
@@ -169,18 +169,23 @@ include '_header.php';
                            
 
                         <!-- Quantity Controls -->
-                        <div class="mt-auto">
-                            <div class="flex items-center justify-center gap-0">
-                                <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 w-10 h-10 rounded-l-lg font-bold text-lg transition">
+                        <div class="mt-3 flex flex-col gap-2 quantityControls">
+                          <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700  transition font-semibold " onclick="addToCart(<?= $productId ?>)">
+                            <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
+                          </button>
+
+                            <div id="qtyDiv_<?= $productId ?>" class="hidden flex items-center justify-center gap-0 rounded-lg overflow-hidden">
+                                <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
-                                <input type="number" id="qty_<?= $productId ?>" value="<?= $cartQty ?>" min="0" class="bg-yellow-100 text-red-700 font-semibold text-center border-0 w-16 h-10 text-lg" onchange="updateCart(<?= $productId ?>)">
-                                <button type="button" onclick="adjustQty(<?= $productId ?>, 1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 h-10 w-10 rounded-r-lg font-bold text-lg transition">
+                                <input type="number" id="qty_<?= $productId ?>" value="<?= $cartQty ?>" min="0" class="bg-yellow-100 text-red-700 font-bold text-center border-0 w-full h-12 text-lg" onchange="updateCart(<?= $productId ?>)">
+                                <button type="button" onclick="adjustQty(<?= $productId ?>, 1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 h-12 py-3 font-bold text-lg transition flex items-center justify-center">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
                         </div>
-                         </div>
+
+                         
                     </div>
                 </div>
             </div>
@@ -219,22 +224,45 @@ function adjustQty(id, delta) {
   updateCart(id);
 }
 
+// Add to Cart button handler
+function addToCart(productId) {
+  const addBtn = document.getElementById('addBtn_' + productId);
+  const qtyDiv = document.getElementById('qtyDiv_' + productId);
+  const qtyInput = document.getElementById('qty_' + productId);
+  
+  // Hide button, show quantity controls
+  addBtn.classList.add('hidden');
+  qtyDiv.classList.remove('hidden');
+  
+  // Set initial quantity to 1
+  qtyInput.value = 1;
+  updateCart(productId);
+}
+
 // Update cart and UI
 
 function updateCart(productId) {
   const qty = parseInt(document.getElementById('qty_' + productId).value) || 0;
   const price = parseFloat(document.getElementById('price_' + productId).textContent) || 0;
+  const addBtn = document.getElementById('addBtn_' + productId);
+  const qtyDiv = document.getElementById('qtyDiv_' + productId);
 
   const orderedValue = qty * price;
   const orderedEl = document.getElementById('ordered_value_' + productId);
 
   if (orderedEl) {
     if (qty > 0) {
-      orderedEl.textContent = "Total: ₹" + orderedValue.toFixed(2);
-      orderedEl.classList.remove("hidden");
+      orderedEl.textContent = "Total Price: ₹" + orderedValue.toFixed(2);
+      orderedEl.classList.remove("invisible");
     } else {
-      orderedEl.classList.add("hidden");
+      orderedEl.classList.add("invisible");
     }
+  }
+
+  // If quantity is 0, show button and hide quantity controls
+  if (qty === 0) {
+    addBtn.classList.remove('hidden');
+    qtyDiv.classList.add('hidden');
   }
 
   $.post("index.php", {
@@ -342,6 +370,27 @@ function closeImageModal() {
 }
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") closeImageModal();
+});
+
+// Category menu scroll functionality
+document.querySelectorAll(".category-btn").forEach(button => {
+  button.addEventListener("click", function(e) {
+    e.preventDefault();
+    const categoryId = this.getAttribute("data-category-id");
+    let targetElement;
+    
+    if (categoryId === "all") {
+      // Scroll to top of products section
+      targetElement = document.querySelector(".productsList");
+    } else {
+      // Scroll to specific category grid
+      targetElement = document.getElementById("productGrid-" + categoryId);
+    }
+    
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
 });
 </script>
 

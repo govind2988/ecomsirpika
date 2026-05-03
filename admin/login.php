@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="bg-gray-100 w-full h-screen flex items-center justify-center">
     <div class="flex bg-white shadow-lg overflow-hidden w-full mx-auto">
         <div class="hidden lg:block lg:w-1/2 bg-cover"
-            style="background-image:url('../assets/images/login-bg.jpg');">
+            style="background-image:url('../assets/images/bg.png'); background-position: center; background-size: cover;">
         </div>
         <div class="w-full h-screen px-16 py-20 lg:w-1/2 flex flex-col justify-center">
 

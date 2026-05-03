@@ -94,15 +94,15 @@ if (!empty($settings['google_analytics'])) {
        <!-- Logo -->           
             <div class="logo text-center start-0 container-fluid">
               <a href="index.php" class="flex items-center gap-2">
-              <?php if (!empty($settings['logo'])): ?>
-                  <span class="text-2xl font-bold text-red-700 m-auto">
-                    <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo">
-                  </span>
-              <?php else: ?>
-                <h1 class="text-xl font-bold text-gray-700"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
-                </h1>
-              <?php endif; ?>
-                    </a>
+                <?php if (!empty($settings['logo'])): ?>
+                    <span class="text-2xl font-bold text-red-700 m-auto">
+                      <img src="uploads/<?= htmlspecialchars($settings['logo']) ?>" alt="Logo">
+                    </span>
+                <?php else: ?>
+                  <h1 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($settings['company_name'] ?? 'Company Name') ?>
+                  </h1>
+                <?php endif; ?>
+              </a>
             </div>
 
 
@@ -111,9 +111,9 @@ if (!empty($settings['google_analytics'])) {
             <!-- Menu -->
             <nav class="hidden lg:flex space-x-6 uppercase deskMenu">
               <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <a href="products.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
-              <a href="aboutus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
-              <a href="contactus.php" class="text-gray-700 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="products.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
+              <a href="aboutus.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
+              <a href="contactus.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
 
 
