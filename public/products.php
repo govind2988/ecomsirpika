@@ -93,6 +93,10 @@ include '_header.php';
                         $productImage = !empty($row['image']) ? 'uploads/' . $row['image'] : 'assets/images/placeholder.png';
                         $cartQty = $cartQuantities[$productId] ?? 0;
                         $orderedValue = $basePrice * $cartQty;
+                        
+                        // ✅ NEW: Check stock quantity (adjust column name if different)
+                        $stockQuantity = (int)($row['stock_quantity'] ?? $row['qty'] ?? $row['stock'] ?? 0);
+                        $hasStock = $stockQuantity > 0;
                     ?>
                     <div class="col-span-1 element-item product-card" data-category-id="<?= $row['category_id'] ?>">
                         <div class="item bg-white shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full flex flex-col">
@@ -125,25 +129,35 @@ include '_header.php';
 
                                     <br>
 
-                                    <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
-                                        Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
-                                    </div>
+                                    <?php if ($hasStock): ?>                                       
+                                        <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
+                                            Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
                                 <div class="mt-3 flex flex-col gap-2 quantityControls">
-                                    <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700 transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
-                                        <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
-                                    </button>
+                                    <?php if (!$hasStock): ?>
+                                        <!-- ✅ NEW: Show Out of Stock instead of controls -->
+                                        <div class="out-of-stock-btn bg-gray-200 px-4 h-12 rounded-lg text-gray-600 font-semibold flex items-center justify-center cursor-not-allowed">
+                                            <i class="fas fa-ban mr-2"></i>Out of Stock
+                                        </div>
+                                    <?php else: ?>
+                                        <!-- ✅ Original Add to Cart + QTY controls (only when in stock) -->
+                                        <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700 transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
+                                            <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
+                                        </button>
 
-                                    <div id="qtyDiv_<?= $productId ?>" class="<?= $cartQty > 0 ? 'flex' : 'hidden' ?> flex items-center justify-center gap-0 rounded-lg overflow-hidden">
-                                        <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
-                                            <i class="fa-solid fa-minus"></i>
-                                        </button>
-                                        <input type="number" id="qty_<?= $productId ?>" value="<?= $cartQty ?>" min="0" class="bg-yellow-100 text-red-700 font-bold text-center border-0 w-full h-12 text-lg" onchange="updateCart(<?= $productId ?>)">
-                                        <button type="button" onclick="adjustQty(<?= $productId ?>, 1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 h-12 py-3 font-bold text-lg transition flex items-center justify-center">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
+                                        <div id="qtyDiv_<?= $productId ?>" class="<?= $cartQty > 0 ? 'flex' : 'hidden' ?> flex items-center justify-center gap-0 rounded-lg overflow-hidden">
+                                            <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                            <input type="number" id="qty_<?= $productId ?>" value="<?= $cartQty ?>" min="0" class="bg-yellow-100 text-red-700 font-bold text-center border-0 w-full h-12 text-lg" onchange="updateCart(<?= $productId ?>)">
+                                            <button type="button" onclick="adjustQty(<?= $productId ?>, 1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 h-12 py-3 font-bold text-lg transition flex items-center justify-center">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -180,8 +194,11 @@ $(document).ready(function () {
   });
 });
 
+// ✅ Updated functions skip out-of-stock products
 function adjustQty(id, delta) {
   const input = document.getElementById('qty_' + id);
+  if (!input) return; // Skip if out of stock
+  
   let value = parseInt(input.value) || 0;
   value += delta;
   if (value < 0) value = 0;
@@ -194,6 +211,8 @@ function addToCart(productId) {
   const qtyDiv = document.getElementById('qtyDiv_' + productId);
   const qtyInput = document.getElementById('qty_' + productId);
 
+  if (!addBtn || !qtyDiv || !qtyInput) return; // Skip out-of-stock
+
   addBtn.classList.add('hidden');
   qtyDiv.classList.remove('hidden');
   qtyInput.value = 1;
@@ -201,10 +220,15 @@ function addToCart(productId) {
 }
 
 function updateCart(productId) {
-  const qty = parseInt(document.getElementById('qty_' + productId).value) || 0;
-  const price = parseFloat(document.getElementById('price_' + productId).textContent) || 0;
+  const qtyInput = document.getElementById('qty_' + productId);
+  const priceEl = document.getElementById('price_' + productId);
   const addBtn = document.getElementById('addBtn_' + productId);
   const qtyDiv = document.getElementById('qtyDiv_' + productId);
+
+  if (!qtyInput || !priceEl || !addBtn || !qtyDiv) return; // Skip out-of-stock
+
+  const qty = parseInt(qtyInput.value) || 0;
+  const price = parseFloat(priceEl.textContent) || 0;
 
   const orderedValue = qty * price;
   const orderedEl = document.getElementById('ordered_value_' + productId);
