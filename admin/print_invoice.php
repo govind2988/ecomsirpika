@@ -1,27 +1,82 @@
 <?php
-    include '../includes/db.php';
-    $conn = getDbConnection();
+include '../includes/db.php';
+$conn = getDbConnection();
 
-    $orderId = intval($_GET['order_id']);
+$orderId = isset($_GET['order_id']) ? (int)$_GET['order_id'] : 0;
+if ($orderId <= 0) {
+    die("Invalid Order ID.");
+}
 
-    $orderSql = "SELECT * FROM orders WHERE id = $orderId";
-    $orderResult = $conn->query($orderSql);
-    if (!$orderResult || $orderResult->num_rows === 0) {
-        die("Invalid Order ID.");
-    }
-    $order = $orderResult->fetch_assoc();
+/*
+|--------------------------------------------------------------------------
+| Fetch settings row
+| Assumption:
+| - settings table has a single row OR you want the latest row
+| - column names may be like:
+|   company_name, company_address, company_phone, company_email, company_logo
+|--------------------------------------------------------------------------
+*/
+$settings = [
+    'company_name'    => 'Your Company Name',
+    'company_address' => '123 Business Street, City, State - ZIP',
+    'company_phone'   => '+91-9876543210',
+    'company_email'   => 'support@yourcompany.com',
+    'company_logo'    => '../assets/images/logo.png'
+];
 
-    $itemsSql = "SELECT oi.quantity, oi.price, p.name AS product_name
-                FROM order_items oi
-                JOIN products p ON oi.product_id = p.id
-                WHERE oi.order_id = $orderId";
-    $itemsResult = $conn->query($itemsSql);
+$settingsSql = "SELECT * FROM settings ORDER BY id DESC LIMIT 1";
+$settingsResult = $conn->query($settingsSql);
+
+if ($settingsResult && $settingsResult->num_rows > 0) {
+    $settingsRow = $settingsResult->fetch_assoc();
+
+    $settings['company_name']    = !empty($settingsRow['company_name']) ? $settingsRow['company_name'] : $settings['company_name'];
+    $settings['company_address'] = !empty($settingsRow['address']) ? $settingsRow['address'] : $settings['company_address'];
+    $settings['company_phone']   = !empty($settingsRow['contact_no']) ? $settingsRow['contact_no'] : $settings['company_phone'];
+    $settings['company_email']   = !empty($settingsRow['contact_email']) ? $settingsRow['contact_email'] : $settings['company_email'];
+
+    // Adjust this if your DB column is named logo instead of company_logo
+    if (!empty($settingsRow['logo'])) {
+        $settings['company_logo'] = '../uploads/' . ltrim($settingsRow['logo'], '/');
+    } 
+}
+
+/*
+|--------------------------------------------------------------------------
+| Fetch order using prepared statement
+|--------------------------------------------------------------------------
+*/
+$orderStmt = $conn->prepare("SELECT * FROM orders WHERE id = ?");
+$orderStmt->bind_param("i", $orderId);
+$orderStmt->execute();
+$orderResult = $orderStmt->get_result();
+
+if (!$orderResult || $orderResult->num_rows === 0) {
+    die("Invalid Order ID.");
+}
+$order = $orderResult->fetch_assoc();
+
+/*
+|--------------------------------------------------------------------------
+| Fetch order items using prepared statement
+|--------------------------------------------------------------------------
+*/
+$itemsStmt = $conn->prepare("
+    SELECT oi.quantity, oi.price, p.name AS product_name
+    FROM order_items oi
+    JOIN products p ON oi.product_id = p.id
+    WHERE oi.order_id = ?
+");
+$itemsStmt->bind_param("i", $orderId);
+$itemsStmt->execute();
+$itemsResult = $itemsStmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Invoice - Order #<?= $order['id'] ?></title>
+    <meta charset="UTF-8">
+    <title>Invoice - Order #<?= (int)$order['id'] ?></title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -41,16 +96,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 20px;
         }
 
         .logo {
-            max-height: 50px;
+            max-height: 60px;
+            max-width: 180px;
+            object-fit: contain;
         }
 
         .company-info {
             text-align: right;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         h1 {
@@ -68,7 +126,8 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .addessInfo{
+
+        .addessInfo {
             display: flex;
             justify-content: space-between;
             align-items: start;
@@ -76,12 +135,11 @@
             margin-top: 1rem;
             flex-wrap: wrap;
             margin-bottom: 20px;
-             
         }
 
-       .addessInfo .info {
-        flex-basis: 45%;
-        box-sizing: border-box;
+        .addessInfo .info {
+            flex-basis: 45%;
+            box-sizing: border-box;
         }
 
         .info p {
@@ -147,34 +205,35 @@
 <div class="invoice-box">
     <div class="header">
         <div>
-            <img src="../assets/images/logo.png" alt="Company Logo" class="logo">
+            <img src="<?= htmlspecialchars($settings['company_logo']) ?>" alt="Company Logo" class="logo">
         </div>
         <div class="company-info">
-            <strong>Your Company Name</strong><br>
-            123 Business Street, City, State - ZIP<br>
-            Phone: +91-9876543210
-            Email: support@yourcompany.com
+            <strong><?= htmlspecialchars($settings['company_name']) ?></strong><br>
+            <?= nl2br(htmlspecialchars($settings['company_address'])) ?><br>
+            Phone: <?= htmlspecialchars($settings['company_phone']) ?><br>
+            Email:
+            <a href="mailto:<?= htmlspecialchars($settings['company_email']) ?>">
+                <?= htmlspecialchars($settings['company_email']) ?>
+            </a>
         </div>
     </div>
 
-    <h1>Invoice - Order #<?= $order['id'] ?></h1>
-
+    <h1>Invoice - Order #<?= (int)$order['id'] ?></h1>
 
     <div class="addessInfo">
-       
-    <div class="info">
-        <div class="section-title">Customer & Order Details</div>
-        <p><strong>Name:</strong> <?= htmlspecialchars($order['customer_name']) ?></p>
-        <p><strong>Phone:</strong> <?= htmlspecialchars($order['customer_phone']) ?></p>
-        <p><strong>Order Date:</strong> <?= $order['order_date'] ?></p>
-    </div>
+        <div class="info">
+            <div class="section-title">Customer & Order Details</div>
+            <p><strong>Name:</strong> <?= htmlspecialchars($order['customer_name']) ?></p>
+            <p><strong>Phone:</strong> <?= htmlspecialchars($order['customer_phone']) ?></p>
+            <p><strong>Order Date:</strong> <?= htmlspecialchars($order['order_date']) ?></p>
+        </div>
 
-    <div class="info">
-        <div class="section-title">Delivery Address</div>
-        <p><strong> <?= htmlspecialchars($order['customer_name']) ?></strong></p>
-        <p><strong> <?= htmlspecialchars($order['customer_phone']) ?></strong></p>
-        <p><strong><?= nl2br(htmlspecialchars($order['customer_address'])) ?></strong></p>
-    </div>
+        <div class="info">
+            <div class="section-title">Delivery Address</div>
+            <p><strong><?= htmlspecialchars($order['customer_name']) ?></strong></p>
+            <p><strong><?= htmlspecialchars($order['customer_phone']) ?></strong></p>
+            <p><strong><?= nl2br(htmlspecialchars($order['customer_address'])) ?></strong></p>
+        </div>
     </div>
 
     <div class="info">
@@ -197,8 +256,8 @@
                 ?>
                 <tr>
                     <td style="text-align: left;"><?= htmlspecialchars($item['product_name']) ?></td>
-                    <td><?= number_format($item['price'], 2) ?></td>
-                    <td><?= $item['quantity'] ?></td>
+                    <td><?= number_format((float)$item['price'], 2) ?></td>
+                    <td><?= (int)$item['quantity'] ?></td>
                     <td><?= number_format($subtotal, 2) ?></td>
                 </tr>
                 <?php endwhile; ?>
@@ -231,7 +290,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 300);
     });
 
-    // Auto-click the button to simulate user trigger after slight delay
     setTimeout(() => {
         btn.click();
     }, 400);
