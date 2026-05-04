@@ -1,9 +1,16 @@
 RewriteEngine On
+#RewriteBase /sirpika/
 
-# Redirect root to public folder internally
 RewriteRule ^$ public/ [L]
 
-# Redirect all other requests to public folder unless file/folder exists
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^aboutus\.php$ public/info.php?page=about [L,QSA,NC]
+RewriteRule ^terms\.php$ public/info.php?page=terms [L,QSA,NC]
+RewriteRule ^faq\.php$ public/info.php?page=faq [L,QSA,NC]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [L]

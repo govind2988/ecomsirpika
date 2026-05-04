@@ -113,7 +113,7 @@ if (!empty($settings['google_analytics'])) {
               <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
               <a href="products.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
               <a href="aboutus.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
-              <a href="contactus.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="contact.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
 
 
