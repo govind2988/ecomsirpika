@@ -13,6 +13,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 $settingsRes = $conn->query("SELECT * FROM settings LIMIT 1");
 $settings = $settingsRes->fetch_assoc() ?? [];
 $uploadDir = '../uploads/';
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fields = [
@@ -33,8 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['logo'] = $logo;
         }
     }
-	
-	// Handle favicon upload
+    
+    // ✅ NEW: Handle logo_icon upload
+    if (!empty($_FILES['logo_icon']['name'])) {
+        $logo_icon = basename($_FILES['logo_icon']['name']);
+        $targetPath = '../uploads/' . $logo_icon;
+        if (move_uploaded_file($_FILES['logo_icon']['tmp_name'], $targetPath)) {
+            $data['logo_icon'] = $logo_icon;
+        }
+    }
+    
+    // Handle favicon upload
     if (!empty($_FILES['favicon']['name'])) {
         $favicon = basename($_FILES['favicon']['name']);
         $targetPath = '../uploads/' . $favicon;
@@ -42,33 +52,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['favicon'] = $favicon;
         }
     }
-	// Handle banner images upload
-	if (isset($_FILES['banner_images']) &&
+    
+    // Handle banner images upload
+    $uploadedImages = [];
+    if (isset($_FILES['banner_images']) &&
     is_array($_FILES['banner_images']['name']) &&
-    count(array_filter($_FILES['banner_images']['name'])) > 0)
-		{	
-		foreach ($_FILES['banner_images']['tmp_name'] as $key => $tmpName) {
-			if ($_FILES['banner_images']['error'][$key] === UPLOAD_ERR_OK) {
-				$name = basename($_FILES['banner_images']['name'][$key]);
-				$uploadedFilename =  uniqid() . '_' . $name;
-				$targetPath = $uploadDir . $uploadedFilename;
-				
-				if (move_uploaded_file($tmpName, $targetPath)) {
-					$uploadedImages[] = $uploadedFilename;
-				}
-			}
-		}
-		$json = json_encode($uploadedImages);
-		$data['banner_images'] = $json;
-		}
+    count(array_filter($_FILES['banner_images']['name'])) > 0) { 
+        foreach ($_FILES['banner_images']['tmp_name'] as $key => $tmpName) {
+            if ($_FILES['banner_images']['error'][$key] === UPLOAD_ERR_OK) {
+                $name = basename($_FILES['banner_images']['name'][$key]);
+                $uploadedFilename = uniqid() . '_' . $name;
+                $targetPath = $uploadDir . $uploadedFilename;
+                
+                if (move_uploaded_file($tmpName, $targetPath)) {
+                    $uploadedImages[] = $uploadedFilename;
+                }
+            }
+        }
+        $json = json_encode($uploadedImages);
+        $data['banner_images'] = $json;
+    }
+    
     // Insert or update
     if ($settings) {
         $updates = [];
         foreach ($data as $key => $value) {
-			if(!empty($value)) {
-				$updates[] = "$key = '$value'";
-				}
-			}
+            if(!empty($value)) {
+                $updates[] = "$key = '$value'";
+            }
+        }
         $conn->query("UPDATE settings SET " . implode(', ', $updates));
     } else {
         $cols = implode(', ', array_keys($data));
@@ -82,11 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include '_header.php'; ?>
 
- <main class="p-6 mt-16 space-y-4">
+<main class="p-6 mt-16 space-y-4">
 
-
-
- <section class="overflow-x-auto bg-white shadow rounded-lg p-4">
+<section class="overflow-x-auto bg-white shadow rounded-lg p-4">
 
 <div class="mx-auto bg-white rounded">
     <?php if (isset($_GET['updated'])): ?>
@@ -97,120 +107,129 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Company Details -->
         <div class="md:col-span-2"><h3 class="font-semibold text-lg border-b pb-2">Company Details</h3></div>
         <div>
-            <label class="block mb-1">Company Name</label>
+            <lable class="block mb-1">Company Name</label>
             <input type="text" name="company_name" value="<?= htmlspecialchars($settings['company_name'] ?? '') ?>" class="w-full border p-2 rounded" required>
         </div>
 
-         <div>
-            <label class="block mb-1">Contact No</label>
+        <div>
+            <lable class="block mb-1">Contact No</label>
             <input type="text" name="contact_no" value="<?= htmlspecialchars($settings['contact_no'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
         <div>
-            <label class="block mb-1">WhatsApp No</label>
+            <lable class="block mb-1">WhatsApp No</label>
             <input type="text" name="whatsapp_no" value="<?= htmlspecialchars($settings['whatsapp_no'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
         <div>
-            <label class="block mb-1">Contact Email</label>
+            <lable class="block mb-1">Contact Email</label>
             <input type="email" name="contact_email" value="<?= htmlspecialchars($settings['contact_email'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
         <div>
-            <label class="block mb-1">Website Link</label>
+            <lable class="block mb-1">Website Link</label>
             <input type="text" name="website" value="<?= htmlspecialchars($settings['website'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
 
-        
-		<div class="logoblock">
-            <label class="block mb-1">Logo</label>
+        <div class="logoblock">
+            <lable class="block mb-1">Logo</label>
             <input type="file" name="logo" accept="image/*" class="w-full">
             <?php if (!empty($settings['logo'])): ?>
                 <img src="../uploads/<?= $settings['logo'] ?>" alt="Logo" class="w-20 mt-2">
             <?php endif; ?>
         </div>
-		<div class="faviconblock">
-            <label class="block mb-1">Favicon</label>
+        
+        <!-- ✅ NEW: Logo Icon field after Logo -->
+        <div class="logoiconblock">
+            <lable class="block mb-1">Logo Icon</label>
+            <input type="file" name="logo_icon" accept="image/*" class="w-full">
+            <?php if (!empty($settings['logo_icon'])): ?>
+                <img src="../uploads/<?= $settings['logo_icon'] ?>" alt="Logo Icon" class="w-20 mt-2">
+            <?php endif; ?>
+        </div>
+        
+        <div class="faviconblock">
+            <lable class="block mb-1">Favicon</label>
             <input type="file" name="favicon" accept="image/*" class="w-full">
             <?php if (!empty($settings['favicon'])): ?>
                 <img src="../uploads/<?= $settings['favicon'] ?>" alt="Favicon" class="w-20 mt-2">
             <?php endif; ?>
         </div>
 
-		<div class="bannerImgblock">
-		<div>
-		<label class="block mb-1">Upload Banner Images</label>
-		<input type="file" name="banner_images[]" multiple><br><br>
-		</div>
-		<div class="current-images">
-		 <label class="block mb-1">Current Images:</label>
+        <div class="bannerImgblock">
+        <div>
+        <lable class="block mb-1">Upload Banner Images</label>
+        <input type="file" name="banner_images[]" multiple><br><br>
+        </div>
+        <div class="current-images">
+         <lable class="block mb-1">Current Images:</label>
 
          <div class="flex flex-wrap gap-2">
 
-		  <?php
-		  // Show current images
-		  $res = $conn->query("SELECT banner_images FROM settings");
-		  $row = $res->fetch_assoc();
-		  $images = json_decode($row['banner_images'], true);
+          <?php
+          // Show current images
+          $res = $conn->query("SELECT banner_images FROM settings");
+          $row = $res->fetch_assoc();
+          $images = json_decode($row['banner_images'], true);
 
-		  if (!empty($images)) {
-			  foreach ($images as $img) {
-				  $imgFilepath = $uploadDir.basename($img);
-				  echo "<img src='$imgFilepath' width='150' style='margin:5px;' />";
-			  }
-		  } else {
-			  echo "No images uploaded.";
-		  }
-		  ?>
+          if (!empty($images)) {
+              foreach ($images as $img) {
+                  $imgFilepath = $uploadDir.basename($img);
+                  echo "<img src='$imgFilepath' width='150' style='margin:5px;' />";
+              }
+          } else {
+              echo "No images uploaded.";
+          }
+          ?>
           </div>
-		</div>
-		</div> 
+        </div>
+        </div> 
 
-       
-		 <div class="md:col-span-2">
-            <label class="block mb-1">Header Message</label>
+        
+        <div class="md:col-span-2">
+            <lable class="block mb-1">Header Message</label>
             <textarea name="header_message" rows="2" class="w-full border p-2 rounded"><?= htmlspecialchars($settings['header_message'] ?? '') ?></textarea>
         </div>
         <div class="md:col-span-2">
-            <label class="block mb-1">Address</label>
+            <lable class="block mb-1">Address</label>
             <textarea name="address" rows="2" class="w-full border p-2 rounded"><?= htmlspecialchars($settings['address'] ?? '') ?></textarea>
         </div>
         <div class="md:col-span-2">
-            <label class="block mb-1">Google Map Embed Link</label>
+            <lable class="block mb-1">Google Map Embed Link</label>
             <textarea name="google_map" rows="2" class="w-full border h-40 p-2 rounded"><?= htmlspecialchars($settings['google_map'] ?? '') ?></textarea>
         </div>
-		<!-- Payment settings -->
-		 <div class="md:col-span-2 mt-4"><h3 class="font-semibold text-lg border-b pb-2">Payment Settings</h3></div>
-		 <div><label class="block mb-1">UPI id</label>
+        <!-- Payment settings -->
+         <div class="md:col-span-2 mt-4"><h3 class="font-semibold text-lg border-b pb-2">Payment Settings</h3></div>
+         <div><lable class="block mb-1">UPI id</label>
             <input type="text" name="upi_id" value="<?= htmlspecialchars($settings['upi_id'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
-		 <div><label class="block mb-1">Shipping Charges</label>
+         <div><lable class="block mb-1">Shipping Charges</label>
             <input type="text" name="shipping_charges" value="<?= htmlspecialchars($settings['shipping_charges'] ?? '0') ?>" class="w-full border p-2 rounded">
         </div>
 
         <!-- Social Media -->
         <div class="md:col-span-2 mt-4"><h3 class="font-semibold text-lg border-b pb-2">Social Media</h3></div>
-        <div><label class="block mb-1">Facebook</label>
+        <div><lable class="block mb-1">Facebook</label>
             <input type="text" name="fb" value="<?= htmlspecialchars($settings['fb'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
-        <div><label class="block mb-1">Instagram</label>
+        <div><lable class="block mb-1">Instagram</label>
             <input type="text" name="instagram" value="<?= htmlspecialchars($settings['instagram'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
-        <div><label class="block mb-1">LinkedIn</label>
+        <div><lable class="block mb-1">LinkedIn</label>
             <input type="text" name="linkedin" value="<?= htmlspecialchars($settings['linkedin'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
-        <div><label class="block mb-1">X (Twitter)</label>
+        <div><lable class="block mb-1">X (Twitter)</label>
             <input type="text" name="x" value="<?= htmlspecialchars($settings['x'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
-        <div><label class="block mb-1">YouTube</label>
+        <div><lable class="block mb-1">YouTube</label>
             <input type="text" name="youtube" value="<?= htmlspecialchars($settings['youtube'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
 
         <!-- SEO Settings -->
         <div class="md:col-span-2 mt-4"><h3 class="font-semibold text-lg border-b pb-2">SEO Settings</h3></div>
         <div class="md:col-span-2">
-            <label class="block mb-1">Meta Title</label>
+            <lable class="block mb-1">Meta Title</label>
             <input type="text" name="meta_title" value="<?= htmlspecialchars($settings['meta_title'] ?? '') ?>" class="w-full border p-2 rounded">
         </div>
         <div class="md:col-span-2">
-            <label class="block mb-1">Meta Description</label>
+            <lable class="block mb-1">Meta Description</label>
             <textarea name="meta_description" rows="2" class="w-full border p-2 rounded"><?= htmlspecialchars($settings['meta_description'] ?? '') ?></textarea>
         </div>
         <div class="md:col-span-2">
@@ -231,3 +250,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <?php include '_footer.php'; ?>
+

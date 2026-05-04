@@ -24,43 +24,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_category'])) {
 }
 
 // Handle product creation
+// Handle product creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     $name = $conn->real_escape_string($_POST['name']);
     $rrp_price = floatval($_POST['rrp_price']);
     $sale_price = floatval($_POST['sale_price']);
- //   $price = floatval($_POST['price']); // Final selling price
     $category_id = intval($_POST['category_id']);
     $description = $conn->real_escape_string($_POST['description'] ?? '');
-	$stock =  intval($_POST['stock']);
+    $stock = intval($_POST['stock']);
     $selectedCategoryId = $category_id;
-
+    
+    // ✅ FIXED: Checkbox handling
+    $featured = isset($_POST['featured']) ? 1 : 0;  // Checkbox sends "on" or nothing
     $imagePath = '';
-   if (!empty($_FILES['image']['name'])) {
-		$targetDir = __DIR__ . '/../uploads/';
-		$filename = uniqid("img_") . ".jpg";  // Always save as .jpg
-		$targetFile = $targetDir . $filename;
-
-		$tmpFile = $_FILES["image"]["tmp_name"];
-
-		if (resizeAndCompressImage($tmpFile, $targetFile)) {
-			$imagePath = '../uploads/'.$filename;
-		} else {
-			$error = "Image resize/compression failed or unsupported format.";
-		}
-	}
-	 $youtubelink = $conn->real_escape_string($_POST['youtubelink']);
-	
-
+    
+    if (!empty($_FILES['image']['name'])) {
+        $targetDir = __DIR__ . '/../uploads/';
+        $filename = uniqid("img_") . ".jpg";
+        $targetFile = $targetDir . $filename;
+        $tmpFile = $_FILES["image"]["tmp_name"];
+        if (resizeAndCompressImage($tmpFile, $targetFile)) {
+            $imagePath = '../uploads/'.$filename;
+        } else {
+            $error = "Image resize/compression failed or unsupported format.";
+        }
+    }
+    $youtubelink = $conn->real_escape_string($_POST['youtubelink'] ?? '');
 
     if (!$error) {
-        $stmt = $conn->prepare("INSERT INTO products (name, rrp_price, sale_price, category_id, stock, description, image, youtube_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sddiisss", $name, $rrp_price, $sale_price, $category_id, $stock, $description, $imagePath, $youtubelink);
+        // ✅ FIXED: bind_param types: "sddiisssi" (featured as INT)
+        $stmt = $conn->prepare("INSERT INTO products (name, rrp_price, sale_price, category_id, stock, description, image, youtube_url, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sddiisssi", $name, $rrp_price, $sale_price, $category_id, $stock, $description, $imagePath, $youtubelink, $featured);
+        
         if ($stmt->execute()) {
-            $success = "✅ Product created successfully!";
-            $selectedCategoryId = null; // reset after success
+            $success = "✅ Product created successfully! Featured: " . ($featured ? 'Yes' : 'No');
+            $selectedCategoryId = null;
         } else {
-            $error = "❌ Failed to insert product.";
+            $error = "❌ Failed to insert product: " . $stmt->error;
         }
+        $stmt->close();
     }
 }
 
@@ -114,7 +116,10 @@ $categories = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
 
     <!-- Product Creation Form -->
     <form action="product_create.php" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow grid grid-cols-2 gap-4">
-
+      <div>
+        <label class="block font-semibold mb-1">Featured Product</label>
+        <input type="checkbox" name="featured" required class="w-full border px-3 py-2 rounded" />
+      </div>
       <div>
         <label class="block font-semibold mb-1">Product Name</label>
         <input type="text" name="name" required class="w-full border px-3 py-2 rounded" />
