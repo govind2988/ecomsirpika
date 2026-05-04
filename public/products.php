@@ -53,13 +53,13 @@ include '_header.php';
 
     <div class="container mx-auto"> 
         <!-- Search and Category Filter -->
-        <div class="productFilter mb-8 p-0 bg-white shadow-md rounded-full">
-            <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 search-filters">
+        <div class="productFilter mb-8 p-0 bg-white shadow-md sm:rounded-full">
+            <div class="w-full sm:ps-2 flex flex-col sm:flex-row items-center justify-center sm:gap-4 search-filters">
                 <!-- Search Input -->
                 <div class="w-full sm:w-3/5 relative">
                     <input 
                         id="searchInput" 
-                        class="search w-full py-3 pl-10 border-1 border-none rounded-full focus:outline-none  transition-all duration-200 placeholder-gray-500 text-gray-700" 
+                        class="search w-full py-3 pl-10 border-1 sm:border-none sm:rounded-full outline-none  transition-all duration-200 placeholder-gray-500 text-gray-700" 
                         placeholder="Search products..."  
                         onkeyup="filterProducts()">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -69,7 +69,7 @@ include '_header.php';
                 <div class="w-full sm:w-2/5 relative">
                     <select 
                         id="categoryFilter" 
-                        class="w-full px-4 py-3 pl-4 pr-10 border-1 border-gray-100 rounded-full bg-white text-gray-700 focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-300 transition-all duration-200 appearance-none cursor-pointer font-medium" 
+                        class="w-full px-4 py-3 pl-4 pr-10 border-1 border-gray-100 sm:rounded-full bg-white text-gray-700 outline-none transition-all duration-200 appearance-none cursor-pointer font-medium" 
                         onchange="filterProducts()">
                         <option value="">All Categories</option>
                         <?php while($cat = $catRes->fetch_assoc()): ?>
@@ -158,9 +158,9 @@ include '_header.php';
                             <span class="text-sm text-gray-400 line-through mr-2">₹<?= number_format($rrp, 2) ?></span>
                             <?php endif; ?>
 <br>
-                             <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
-                                Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
-                            </div>                            
+                      <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
+                        Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
+                    </div>                            
                            
                         </div>
 
@@ -170,11 +170,11 @@ include '_header.php';
 
                         <!-- Quantity Controls -->
                         <div class="mt-3 flex flex-col gap-2 quantityControls">
-                          <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700  transition font-semibold " onclick="addToCart(<?= $productId ?>)">
+                          <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700  transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
                             <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
                           </button>
 
-                            <div id="qtyDiv_<?= $productId ?>" class="hidden flex items-center justify-center gap-0 rounded-lg overflow-hidden">
+                            <div id="qtyDiv_<?= $productId ?>" class="<?= $cartQty > 0 ? 'flex' : 'hidden' ?> flex items-center justify-center gap-0 rounded-lg overflow-hidden">
                                 <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
                                     <i class="fa-solid fa-minus"></i>
                                 </button>

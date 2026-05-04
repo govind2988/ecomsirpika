@@ -162,7 +162,7 @@ if (!empty($productIds)) {
 include_once '_header.php';
 ?>
 
-<main class="container mx-auto mt-8">
+<main class="container mx-auto mt-8 px-4">
  <?php if ($message): ?>
    <div id="msgHolder"class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded"><?= $message ?></div>
  <?php else: ?>
@@ -236,7 +236,7 @@ include_once '_header.php';
           <span class="font-medium">Shipping</span>
           <span>₹<span id="summary-shipping"><?= number_format($shipping, 2) ?></span></span>
         </div>
-        <div class="flex justify-between py-2 text-lg font-bold">
+        <div class="flex justify-between py-2 text-lg font-bold text-primary">
           <span>Order Total</span>
           <span>₹<span id="summary-total"><?= number_format($orderTotal, 2) ?></span></span>
         </div>
@@ -247,7 +247,7 @@ include_once '_header.php';
       <form id="checkoutForm" method="post">
       <input type="hidden" name="mode" value="<?= htmlspecialchars($mode) ?>">
 
-      <div  class="grid grid-cols-2 gap-4">
+      <div  class="grid grid-cols-1 lg:grid-cols-2 gap-2">
 
       <div class="mb-2">
         <label>Name:</label>

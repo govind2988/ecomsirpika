@@ -303,8 +303,8 @@ p.price{
         height: 300px;
     }
     a.online-order{
-        font-size: 12px;
-        padding: 6px 12px;
+        font-size: 10px;
+        padding: 6px 10px;
     }
     .home-category .catItem h2{
         font-size: 16px;
@@ -323,6 +323,26 @@ p.price{
     }
     .home-category{
         margin-top: 0px;
+    }
+    .productFilter{
+        flex-direction: column;
+        gap: 10px;
+    }
+    .innerProductBanner{
+       padding: 0px;
+    }
+    .logo img{
+        height: 40px;
+       
+    }
+     header{
+        padding: 10px 0;
+    }
+    .marquee-text{
+        font-size: 10px !important;
+    }
+    header .fa-shopping-cart{
+        font-size: 18px;
     }
 }
 

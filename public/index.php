@@ -178,78 +178,89 @@ include '_header.php';
           </h2>
 
           <div id="productSlider" class="owl-carousel owl-theme productList">
+            <?php
+            // Fetch 5 most recently added products
+            $recentProductsQuery = $conn->query("SELECT * FROM products ORDER BY id DESC LIMIT 5");
+            if ($recentProductsQuery->num_rows > 0):
+              while ($row = $recentProductsQuery->fetch_assoc()):
+                $rrp = (float)$row['rrp_price'];
+                $sale = (float)$row['sale_price'];
+                $basePrice = $sale > 0 ? $sale : $rrp;
+                $productId = $row['id'];
+                $productImage = !empty($row['image']) ? 'uploads/' . $row['image'] : 'assets/images/placeholder.png';
+                $cartQty = $cartQuantities[$productId] ?? 0;
+                $orderedValue = $basePrice * $cartQty;
+            ?>
+            <!-- Product Card -->
+            <div class="item element-item product-card" data-category-id="<?= $row['category_id'] ?>">
+                <div class="item bg-white shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full flex flex-col">
+                    <!-- Image Section -->
+                    <div class="zoomOut shineEffect overflow-hidden bg-gray-100 h-48 flex items-center justify-center">
+                        <figure class="w-full h-full">
+                            <a class="popup block w-full h-full" href="<?= htmlspecialchars($productImage) ?>" title="<?= htmlspecialchars($row['name']) ?> - ₹<?= number_format($basePrice, 2) ?>">
+                                <img src="<?= htmlspecialchars($productImage) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="w-full h-full object-cover hover:scale-110 transition-transform cursor-pointer">
+                            </a>
+                             <?php if (!empty($row['youtube_url'])): ?>
+                        <a href="<?= htmlspecialchars($row['youtube_url']) ?>" target="_blank" class="youtubeBtn inline-flex items-center gap-2 px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm w-fit">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.5 6.4c-.3-1.2-1.2-2.1-2.4-2.4C18.8 3.5 12 3.5 12 3.5s-6.8 0-9.1.5c-1.2.3-2.1 1.2-2.4 2.4C0 8.7 0 12 0 12s0 3.3.5 5.6c.3 1.2 1.2 2.1 2.4 2.4 2.3.5 9.1.5 9.1.5s6.8 0 9.1-.5c1.2-.3 2.1-1.2 2.4-2.4.5-2.3.5-5.6.5-5.6s0-3.3-.5-5.6zM9.8 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+                            
+                        </a>
+                        <?php endif; ?>
+                        </figure>
+                    </div>
 
-       
-          <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/products/flakes/FoxtailMilletFlakes.png" title="500g - ₹75.00">
-                  <img src="assets/images/products/flakes/FoxtailMilletFlakes.png" alt="Sirpika Millets" />
-                </a>
+                    <!-- Content Section -->
+                    <div class="content p-4 flex flex-col flex-grow">
+                        <!-- Product Name -->
+                        <h2 class="text-lg font-semibold text-gray-800 mb-2"><?= htmlspecialchars($row['name']) ?></h2>
 
-              </figure>
+                        <!-- Description -->
+                        <?php if (!empty($row['description'])): ?>
+                        <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($row['description']) ?></p>
+                        <?php endif; ?>
+
+                        <!-- Price Section -->
+                        <div class="pricing">                           
+                            <span class="text-red-600 font-bold text-xl">₹<span id="price_<?= $row['id'] ?>"><?= number_format($basePrice, 2) ?></span></span>
+                             <?php if ($rrp > $basePrice): ?>
+                            <span class="text-sm text-gray-400 line-through mr-2">₹<?= number_format($rrp, 2) ?></span>
+                            <?php endif; ?>
+<br>
+                      <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
+                        Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
+                    </div>                            
+                        </div>
+
+                        <!-- Quantity Controls -->
+                        <div class="mt-3 flex flex-col gap-2 quantityControls">
+                          <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700  transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
+                            <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
+                          </button>
+
+                            <div id="qtyDiv_<?= $productId ?>" class="<?= $cartQty > 0 ? 'flex' : 'hidden' ?> flex items-center justify-center gap-0 rounded-lg overflow-hidden">
+                                <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input type="number" id="qty_<?= $productId ?>" value="<?= $cartQty ?>" min="0" class="bg-yellow-100 text-red-700 font-bold text-center border-0 w-full h-12 text-lg" onchange="updateCart(<?= $productId ?>)">
+                                <button type="button" onclick="adjustQty(<?= $productId ?>, 1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 h-12 py-3 font-bold text-lg transition flex items-center justify-center">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="content">
-              <h2>Foxtail Millet Flakes</h2>
-              <p class="weight">400g</p>
-              <p class="price">50.00 <span>55.00</span></p>
-            </div>
-          </div>
-       
-          <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/products/flakes/LittleMilletFlakes.png" title="500g - ₹75.00">
-                  <img src="assets/images/products/flakes/LittleMilletFlakes.png" alt="Sirpika Millets" />
-                </a>
-
-              </figure>
-            </div>
-            <div class="content">
-              <h2>Little Millet Flakes</h2>
-              <p class="weight">400g</p>
-              <p class="price">50.00 <span>55.00</span></p>
-            </div>
-          </div>
-
-
-          
-          <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/placeholder.png" title="500g - ₹150.00">
-                  <img src="assets/images/placeholder.png" alt="Sirpika Millets" />
-                </a>
-
-              </figure>
-            </div>
-            <div class="content">
-              <h2>Karapkuvani Rice Flakes</h2>
-              <p class="weight">500g</p>
-              <p class="price">150.00 <span>160.00</span></p>
-            </div>
-          </div>
-      
-          <div class="item">
-            <div class="zoomOut shineEffect">
-              <figure>
-                <a class="popup" href="assets/images/placeholder.png" title="500g - ₹130.00">
-                  <img src="assets/images/placeholder.png" alt="Sirpika Millets" />
-                </a>
-
-              </figure>
-            </div>
-            <div class="content">
-              <h2>Rice Flakes</h2>
-              <p class="weight">500g</p>
-              <p class="price">130.00 <span>150.00</span></p>
-            </div>
-          </div>
-        
-       
-
-
-
+            <?php 
+              endwhile;
+            else:
+            ?>
+              <div class="item">
+                <div class="content text-center">
+                  <h2>No Products Available</h2>
+                  <p>Check back soon for new products!</p>
+                </div>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -374,8 +385,9 @@ $(document).ready(function () {
   $('#productSlider').owlCarousel({
     items: 1,
     loop: true,
-    autoplay: true,
+    autoplay: false,
     autoplayTimeout: 5000,
+    margin: 10,
     dots: true,
     nav: true,
     navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
@@ -412,7 +424,97 @@ $(document).ready(function () {
       }
     }
   });
+
+  // Colorbox for popup images
+  $("a.popup").colorbox({
+    rel: 'gal',
+    width: "80%",
+    height: "80%"
+  });
 });
+
+// Quantity +/- button
+function adjustQty(id, delta) {
+  const input = document.getElementById('qty_' + id);
+  let value = parseInt(input.value) || 0;
+  value += delta;
+  if (value < 0) value = 0;
+  input.value = value;
+  updateCart(id);
+}
+
+// Add to Cart button handler
+function addToCart(productId) {
+  const addBtn = document.getElementById('addBtn_' + productId);
+  const qtyDiv = document.getElementById('qtyDiv_' + productId);
+  const qtyInput = document.getElementById('qty_' + productId);
+  
+  // Hide button, show quantity controls
+  addBtn.classList.add('hidden');
+  qtyDiv.classList.remove('hidden');
+  
+  // Set initial quantity to 1
+  qtyInput.value = 1;
+  updateCart(productId);
+}
+
+// Update cart and UI
+function updateCart(productId) {
+  const qty = parseInt(document.getElementById('qty_' + productId).value) || 0;
+  const price = parseFloat(document.getElementById('price_' + productId).textContent) || 0;
+  const addBtn = document.getElementById('addBtn_' + productId);
+  const qtyDiv = document.getElementById('qtyDiv_' + productId);
+
+  const orderedValue = qty * price;
+  const orderedEl = document.getElementById('ordered_value_' + productId);
+
+  if (orderedEl) {
+    if (qty > 0) {
+      orderedEl.textContent = "Total Price: ₹" + orderedValue.toFixed(2);
+      orderedEl.classList.remove("invisible");
+    } else {
+      orderedEl.classList.add("invisible");
+    }
+  }
+
+  // If quantity is 0, show button and hide quantity controls
+  if (qty === 0) {
+    addBtn.classList.remove('hidden');
+    qtyDiv.classList.add('hidden');
+  }
+
+  $.post("index.php", {
+    ajax: 'update_cart',
+    product_id: productId,
+    quantity: qty
+  }, function (response) {
+    try {
+      const res = JSON.parse(response);
+      if (res.status === 'success') {
+        updateCartCount(res.cartCount);
+      }
+    } catch (e) {
+      console.error('Cart update failed', e);
+    }
+  });
+}
+
+// Update the cart count badge in header
+function updateCartCount(count) {
+  const cartLink = document.querySelector(".relative a"); // target <a> inside .relative
+  let badge = cartLink.querySelector(".cart-badge"); // use specific class
+
+  if (count > 0) {
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "cart-badge absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5";
+      cartLink.appendChild(badge);
+    }
+    badge.textContent = count;
+  } else if (badge) {
+    badge.remove();
+  }
+}
 </script>
 
 </main>

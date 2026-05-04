@@ -269,8 +269,7 @@ h1.head{
 .productList .item{
    display: flex;
    flex-direction: column;
-   background: #fff;
-   box-shadow: 0 3px 10px 5px rgba(100, 100, 100, 0.06);
+  
    margin-bottom: 20px;
 }
 
@@ -1039,4 +1038,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 button, input, optgroup, select, textarea{
    outline: none;
+}
+
+header{
+   z-index: 9999 !important;
 }
