@@ -166,17 +166,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <?php
           // Show current images
           $res = $conn->query("SELECT banner_images FROM settings");
-          $row = $res->fetch_assoc();
-          $images = json_decode($row['banner_images'], true);
+          $row = $res->fetch_assoc();          
+        $bannerImagesJson = $row['banner_images'] ?? '';
+        $images = [];
 
-          if (!empty($images)) {
-              foreach ($images as $img) {
-                  $imgFilepath = $uploadDir.basename($img);
-                  echo "<img src='$imgFilepath' width='150' style='margin:5px;' />";
-              }
-          } else {
-              echo "No images uploaded.";
-          }
+        if (!empty($bannerImagesJson)) {
+            $decoded = json_decode($bannerImagesJson, true);
+
+            if (is_array($decoded)) {
+                $images = $decoded;
+            }
+        }
+
+        if (!empty($images)) {
+            foreach ($images as $img) {
+                $imgFilepath = $uploadDir . basename($img);
+                echo "<img src='" . htmlspecialchars($imgFilepath, ENT_QUOTES, 'UTF-8') . "' width='150' style='margin:5px;' />";
+            }
+        } else {
+            echo "No images uploaded.";
+        }
+
           ?>
           </div>
         </div>
