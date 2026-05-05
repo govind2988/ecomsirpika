@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fields = [
         'company_name', 'contact_no', 'whatsapp_no', 'contact_email', 'header_message',
         'address', 'website', 'google_map', 'fb', 'instagram', 'linkedin',
-        'x', 'youtube', 'meta_title', 'meta_description', 'meta_keywords', 'google_analytics', 'banner_images', 'shipping_charges', 'upi_id'
+        'x', 'youtube', 'meta_title', 'meta_description', 'meta_keywords', 'google_analytics', 'banner_images'
     ];
     $data = [];
     foreach ($fields as $field) {
