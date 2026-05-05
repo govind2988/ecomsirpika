@@ -377,7 +377,9 @@ CREATE TABLE `settings` (
   `favicon` varchar(255) DEFAULT NULL,
   `header_message` text DEFAULT NULL,
   `banner_images` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `logo_icon` varchar(255) DEFAULT NULL
+  `logo_icon` varchar(255) DEFAULT NULL,
+  `shipping_charges` int(11) NOT NULL DEFAULT 0,
+  `upi_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -385,7 +387,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `company_name`, `logo`, `contact_no`, `whatsapp_no`, `contact_email`, `address`, `website_link`, `google_map`, `fb_link`, `insta_link`, `linkedin_link`, `x_link`, `youtube_link`, `meta_title`, `meta_description`, `meta_keywords`, `google_analytics`, `website`, `fb`, `instagram`, `linkedin`, `twitter`, `youtube`, `x`, `favicon`, `header_message`, `banner_images`, `logo_icon`) VALUES
-(1, 'My Company', 'sirpika_logo.svg', '+911234567890', '', 'test45@test45.com', 'test', NULL, '', NULL, NULL, NULL, NULL, NULL, 'test', 'test', 'test', '', '', 'https://www.facebook.com/lotusinfosys/', 'https://www.instagram.com/lotusinfosys/', 'https://in.linkedin.com/company/lotusinfosys', NULL, 'https://www.youtube.com/user/LotusInfosys', 'https://x.com/Lotusinfosys', 'sirpika_logo.svg', 'Free Delivery for Orders above ₹1000', '[\"68809093ae77e_banner2.avif\",\"68809093ae9d7_venkat_crackers.jpg\",\"68809093aec7f_venkat_diwali.jpeg\"]', NULL);
+(1, 'My Company', 'sirpika_logo.svg', '+911234567890', '', 'test45@test45.com', 'test', NULL, '', NULL, NULL, NULL, NULL, NULL, 'test', 'test', 'test', '', '', 'https://www.facebook.com/lotusinfosys/', 'https://www.instagram.com/lotusinfosys/', 'https://in.linkedin.com/company/lotusinfosys', NULL, 'https://www.youtube.com/user/LotusInfosys', 'https://x.com/Lotusinfosys', 'sirpika_logo.svg', 'Free Delivery for Orders above ₹1000', '[\"68809093ae77e_banner2.avif\",\"68809093ae9d7_venkat_crackers.jpg\",\"68809093aec7f_venkat_diwali.jpeg\"]', NULL, 0, '');
 
 -- --------------------------------------------------------
 

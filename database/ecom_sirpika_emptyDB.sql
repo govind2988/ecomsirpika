@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2026 at 03:33 PM
+-- Generation Time: May 05, 2026 at 05:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.3.30
 
@@ -227,8 +227,17 @@ CREATE TABLE `settings` (
   `favicon` varchar(255) DEFAULT NULL,
   `header_message` text DEFAULT NULL,
   `banner_images` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `logo_icon` varchar(255) DEFAULT NULL
+  `logo_icon` varchar(255) DEFAULT NULL,
+  `shipping_charges` int(11) NOT NULL DEFAULT 0,
+  `upi_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `settings`
+--
+
+INSERT INTO `settings` (`id`, `company_name`, `logo`, `contact_no`, `whatsapp_no`, `contact_email`, `address`, `website_link`, `google_map`, `fb_link`, `insta_link`, `linkedin_link`, `x_link`, `youtube_link`, `meta_title`, `meta_description`, `meta_keywords`, `google_analytics`, `website`, `fb`, `instagram`, `linkedin`, `twitter`, `youtube`, `x`, `favicon`, `header_message`, `banner_images`, `logo_icon`, `shipping_charges`, `upi_id`) VALUES
+(0, ' ', NULL, '', '', '', '', NULL, '', NULL, NULL, NULL, NULL, NULL, '', '', '', '', '', '', '', '', NULL, '', '', NULL, '', '', NULL, 0, ' ');
 
 -- --------------------------------------------------------
 
