@@ -51,28 +51,28 @@ include '_header.php';
         </div> -->
 
         <div class="col-md-3 catItem shineEffect">
-          <a href="products.html">
+          <a href="products.php">
             <figure><img src="assets/images/products/MilletsRice.png" alt="Sirpika Millets" /></figure>
             <h2>Unpolished Rice & Millets</h2>
           </a>
         </div>
 
         <div class="col-md-3 catItem shineEffect">
-          <a href="products.html">
+          <a href="products.php">
             <figure><img src="assets/images/products/TraditionalRice.png" alt="Sirpika Millets" /></figure>
             <h2>Traditional Rice</h2>
           </a>
         </div>
 
         <div class="col-md-3 catItem shineEffect">
-          <a href="products.html">
+          <a href="products.php">
             <figure><img src="assets/images/products/MilletsFlakes.png" alt="Sirpika Millets" /></figure>
             <h2>Millets flakes</h2>
           </a>
         </div>
 
          <div class="col-md-3 catItem shineEffect">
-          <a href="products.html">
+          <a href="products.php">
             <figure><img src="assets/images/products/RiceFlakes.png" alt="Sirpika Millets" /></figure>
             <h2>Rice flakes</h2>
           </a>
@@ -174,7 +174,7 @@ include '_header.php';
         <div class="col-md-8 right">
           <h2 class="head bgLeft">
             <span> Explore Our Products</span>
-            <a href="./products.html" class="btn btn-primary float-end">View All Products</a>
+            <a href="./products.php" class="btn btn-primary float-end">View All Products</a>
           </h2>
 
           <div id="productSlider" class="owl-carousel owl-theme productList">

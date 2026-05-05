@@ -37,11 +37,11 @@
         </a>
       <?php endif; ?>
 
-      <?php if (!empty($settings['x'])): ?>
+      <!-- <?php if (!empty($settings['x'])): ?>
         <a href="<?= htmlspecialchars($settings['x']) ?>" target="_blank" class="hover:text-yellow-400" aria-label="X (Twitter)">
-          <i class="fa-brands fa-x"></i>
+          <i class="fa-brands fa-x-twitter"></i>
         </a>
-      <?php endif; ?>
+      <?php endif; ?> -->
 
       <?php if (!empty($settings['instagram'])): ?>
         <a href="<?= htmlspecialchars($settings['instagram']) ?>" target="_blank" class="hover:text-yellow-400" aria-label="Instagram">
@@ -49,11 +49,11 @@
         </a>
       <?php endif; ?>
 
-      <?php if (!empty($settings['linkedin'])): ?>
+      <!-- <?php if (!empty($settings['linkedin'])): ?>
         <a href="<?= htmlspecialchars($settings['linkedin']) ?>" target="_blank" class="hover:text-yellow-400" aria-label="LinkedIn">
          <i class="fa-brands fa-linkedin"></i>
         </a>
-      <?php endif; ?>
+      <?php endif; ?> -->
 
       <?php if (!empty($settings['youtube'])): ?>
         <a href="<?= htmlspecialchars($settings['youtube']) ?>" target="_blank" class="hover:text-yellow-400" aria-label="YouTube">

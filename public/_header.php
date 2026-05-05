@@ -63,6 +63,24 @@ $cartCount = array_sum($_SESSION['cart'] ?? []);
   <link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>assets/css/responsive.css">
 
   
+
+  <meta property="og:title" content="Sirpika Millets | Healthy Millet & Traditional Rice Products">
+<meta property="og:description" content="Explore nutrient-rich millets, unpolished rice, and traditional grains. Boost your health with Sirpika Millets’ natural and eco-friendly products.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sirpikamillets.com/">
+<meta property="og:image" content="https://sirpikamillets.com/assets/images/sirpika_og.png">
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sirpika Millets | Healthy Millet Products">
+<meta name="twitter:description" content="Buy unpolished rice, millet flakes, and traditional grains rich in protein and fiber. Healthy living starts here.">
+<meta name="twitter:image" content="https://sirpikamillets.com/assets/images/sirpika_og.png">
+
+
+<link rel="canonical" href="https://sirpikamillets.com/">
+
+
+
   
 
 
@@ -110,10 +128,10 @@ if (!empty($settings['google_analytics'])) {
                        
             <!-- Menu -->
             <nav class="hidden lg:flex space-x-6 uppercase deskMenu">
-              <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <a href="products.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
-              <a href="aboutus.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
-              <a href="contact.php" class="text-gray-800 font-medium border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="index.php" class="text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
+              <a href="products.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
+              <a href="aboutus.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
+              <a href="contact.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
 
 
@@ -152,10 +170,10 @@ if (!empty($settings['google_analytics'])) {
                       
          <nav class="flex flex-column uppercase">
               <i class="fa fa-times text-2xl text-right mb-4 cursor-pointer mm_closebtn" id="mobile-menu-close"></i>
-              <a href="index.php" class="text-primary font-medium border-b-4 border-yellow-400 hover:border-b-4 py-3">Home</a>
-              <a href="products.php" class="text-white font-medium border-b border-gray-300 hover:border-yellow-400 py-6">Products</a>
-              <a href="aboutus.php" class="text-white font-medium border-b border-gray-300  hover:border-yellow-400 py-6">About Us</a>
-              <a href="contactus.php" class="text-white font-medium border-b border-gray-300  hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="index.php" class="text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-3">Home</a>
+              <a href="products.php" class="text-white font-bold border-b border-gray-300 hover:border-yellow-400 py-6">Products</a>
+              <a href="aboutus.php" class="text-white font-bold border-b border-gray-300  hover:border-yellow-400 py-6">About Us</a>
+              <a href="contactus.php" class="text-white font-bold border-b border-gray-300  hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
 
         </div>
