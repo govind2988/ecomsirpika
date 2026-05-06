@@ -79,16 +79,7 @@ include '_header.php';
 
             <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow grid grid-cols-2 gap-4">
                 
-                <div>
-                    <label class="block font-semibold mb-1">Featured Product</label>
-                    <input 
-                        type="checkbox" 
-                        name="featured" 
-                        value="1"
-                        <?= !empty($product['featured']) ? 'checked' : '' ?>
-                        class="h-5 w-5"
-                    />
-                </div>
+               
 
                 <div>
                     <label class="block font-semibold mb-1">Product Name:</label>
@@ -114,13 +105,28 @@ include '_header.php';
                     <label class="block font-semibold mb-1">Image:</label>
                     <input type="file" name="image" class="w-full border rounded px-3 py-2" />
                     <div class="mt-2">
-                        <img src="../uploads/<?= htmlspecialchars($product['image']) ?>" width="120" class="rounded shadow" />
+                        <?php $productImage = !empty($product['image']) ? '../uploads/' . $product['image'] : '../assets/images/placeholder.png'; ?>
+                        <img src="<?= htmlspecialchars($productImage) ?>" width="40" class="rounded shadow" />
                     </div>
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-1">You Tube Link:</label>
                     <input type="text" name="youtubelink" class="w-full border rounded px-3 py-2" value="<?= htmlspecialchars($product['youtube_url']) ?>" />
+                </div>
+
+                 <div class="flex items-center gap-2">
+                    <input 
+                        type="checkbox" 
+                        id="featured"
+                        name="featured" 
+                        value="1"
+                        <?= !empty($product['featured']) ? 'checked' : '' ?>
+                        class="h-5 w-5"
+                    />
+                    <label for="featured" class="block font-semibold">Featured Product</label>
+
+                    
                 </div>
 
                 <button type="submit" class="bg-primary text-white px-4 py-2 rounded">Update</button>

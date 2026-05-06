@@ -100,6 +100,7 @@ include '_header.php';
                         </tr>
                     </thead>
                    
+
                      <tbody>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr class="hover:bg-gray-50">
@@ -109,7 +110,8 @@ include '_header.php';
 								<td class="py-2 px-4 border-b">₹<?= $row['sale_price'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $row['stock'] ?></td>
                                 <td class="py-2 px-4 border-b">
-                                    <img src="../uploads/<?= $row['image'] ?>" alt="Product Image" class="w-8 h-8 object-cover rounded">
+                                    <?php $productImage = !empty($row['image']) ? '../uploads/' . $row['image'] : '../assets/images/placeholder.png'; ?>
+                                    <img src="<?= $productImage ?>" alt="Product Image" class="w-8 h-8 object-cover rounded">
                                 </td>
                                 <td class="py-2 px-4 border-b">
                                     <a href="edit_product.php?id=<?= $row['id'] ?>" class="bg-gray-600 text-white px-3 py-1 rounded view-btn text-sm">Edit</a>

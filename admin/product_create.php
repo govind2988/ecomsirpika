@@ -116,10 +116,7 @@ $categories = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
 
     <!-- Product Creation Form -->
     <form action="product_create.php" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow grid grid-cols-2 gap-4">
-      <div>
-        <label class="block font-semibold mb-1">Featured Product</label>
-        <input type="checkbox" name="featured" required class="w-full border px-3 py-2 rounded" />
-      </div>
+      
       <div>
         <label class="block font-semibold mb-1">Product Name</label>
         <input type="text" name="name" required class="w-full border px-3 py-2 rounded" />
@@ -165,6 +162,11 @@ $categories = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
 	  <div>
         <label class="block font-semibold mb-1">Stock:</label>
         <input type="number" name="stock" class="w-full border px-3 py-2 rounded" required />
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="checkbox" name="featured" class="w-5 h-5 border px-3 py-2 rounded" />
+        <label class="block font-semibold">Featured Product</label>
       </div>
 
       <button type="submit" class="bg-primary text-white font-semibold px-6 py-2 rounded">

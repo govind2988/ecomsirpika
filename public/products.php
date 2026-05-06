@@ -80,7 +80,7 @@ include '_header.php';
                 $categoryName = $categoryMap[$categoryID] ?? 'Unknown Category';
         ?>
             <div class="category-section mt-8" id="productGrid-<?= $categoryID ?>" data-category-section="<?= $categoryID ?>">
-                <div class="col-span-full mt-4 category-header-wrap">
+                <div class="col-span-full mt-4 category-header-wrap mb-2">
                     <h2 class="cathead"><?= htmlspecialchars($categoryName) ?></h2>
                 </div>
 
