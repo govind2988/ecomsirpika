@@ -147,7 +147,7 @@ if (!empty($settings['google_analytics'])) {
                    <i class="fa fa-shopping-cart text-2xl text-pri"></i>
 
                     <?php if (isset($cartCount) && $cartCount > 0): ?>
-                      <span class="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5"><?= $cartCount ?></span>
+                      <span class="cart-badge absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5"><?= $cartCount ?></span>
                     <?php endif; ?>
                   </a>
                </div>
