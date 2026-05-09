@@ -30,7 +30,7 @@ include '_header.php';
   <div class="mx-auto px-4">
    <h1 class="text-3xl font-bold mb-6"><?= htmlspecialchars($page['title']) ?></h1>
     <div class="bg-white p-6 rounded shadow leading-relaxed text-gray-700">
-      <?= nl2br(htmlspecialchars($page['content'])) ?>
+      <?= $page['content'] ?>
     </div>
   </div>
 </main>
