@@ -42,6 +42,11 @@ $settings = $settingsRes->fetch_assoc();
                    <i class="fa-solid w-6 flex justify-center fa-basket-shopping"></i>
                     <span class="ft-medium">Orders</span>
                 </a>
+                <a href="cat_list.php"
+                    class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2 <?= ($currentPage == 'cat_list.php') ? 'active' : '' ?>">
+                    <i class="fa-solid w-6 flex justify-center fa-boxes-stacked"></i>
+                    <span class="ft-medium">Categories</span>
+                </a>
                  <a href="products.php"
                     class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2 <?= ($currentPage == 'products.php') ? 'active' : '' ?>">
                     <i class="fa-solid w-6 flex justify-center fa-boxes-stacked"></i>
@@ -59,7 +64,7 @@ $settings = $settingsRes->fetch_assoc();
                     <span class="ft-medium">CMS Pages</span>
                 </a> 
                  <a href="reports.php"
-                    class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2">
+                    class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2 <?= ($currentPage == 'reports.php') ? 'active' : '' ?>">
                     <i class="fa-solid w-6 flex justify-center fa-clipboard-list"></i>
                     <span class="ft-medium">Business Reports</span>
                 </a>
@@ -71,8 +76,7 @@ $settings = $settingsRes->fetch_assoc();
             </nav>
             <div class="p-3 inline-flex items-center justify-start h-20 w-full border-t border-gray-700">
                 <a href="settings.php"
-                    class="flex text-left w-full items-center justify-start px-2 py-3 gap-2 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg <?= ($currentPage == 'settings.php') ? 'active' : '' ?>">
-
+                   class="inline-flex items-center justify-start py-2 px-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg gap-2" style="<?= ($currentPage == 'settings.php') ? 'color: #fff;background: #374151;' : '' ?>">
                    <i class="fa-solid w-6 flex justify-center fa-gears"></i>
                     <span class="ft-medium">Site Configuration</span>
 

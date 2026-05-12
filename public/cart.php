@@ -305,7 +305,7 @@ include_once '_header.php';
     <?php if ($bShowCart): ?>
 		<p id="cartMsg" class="text-lg">Your cart is empty.</p>		
     <?php endif; ?>
-    <a href="<?= htmlspecialchars(BASE_URL) ?>" class="mt-4 bg-primary  inline-block text-white px-4 py-2 rounded font-medium">Continue Shopping</a>
+    <a href="products.php" class="mt-4 bg-primary  inline-block text-white px-4 py-2 rounded font-medium">Continue Shopping</a>
     </div>
   <?php endif; ?>
 
