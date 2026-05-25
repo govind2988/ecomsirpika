@@ -3,8 +3,7 @@ include './../includes/auth.php';
 include './../includes/db.php';
 
 $conn = getDbConnection();
-$categories = $conn->query("SELECT * FROM categories ORDER BY id DESC");
-
+$categories = $conn->query("SELECT * FROM categories ORDER BY sort_order ASC, id DESC");
 // Get newId parameter (if present)
 $newId = isset($_GET['newId']) ? intval($_GET['newId']) : 0;
 
@@ -12,6 +11,7 @@ include '_header.php';
 ?>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
 <main class="p-6 mt-16 space-y-4">
   <div class="wrapper max-w-4xl mx-auto">
@@ -34,28 +34,57 @@ include '_header.php';
             <th class="p-3 text-left w-150">Actions</th>
           </tr>
         </thead>
-        <tbody>
-          <?php if ($categories && $categories->num_rows > 0): ?>
-            <?php $i = 1; while ($cat = $categories->fetch_assoc()): ?>
-              <tr class="border-t hover:bg-gray-50 transition-colors duration-300" id="cat-row-<?= $cat['id'] ?>">
-                <td class="p-3 text-gray-600"><?= $i++; ?></td>
-                <td class="p-3 font-medium"><?= htmlspecialchars($cat['name']) ?></td>
-                <td class="p-3 space-x-2 cta">
-                  <a href="cat_edit.php?id=<?= $cat['id'] ?>" 
-                     class="px-2 py-1 text-sm hover:text-primary"><i class="fa-regular fa-pen-to-square"></i></a>
+        <tbody id="sortable-categories">
+            <?php if ($categories && $categories->num_rows > 0): ?>
 
-                  <button 
-                     class="px-2 py-1 text-sm hover:text-primary delete-btn" 
-                     data-id="<?= $cat['id'] ?>"><i class="fa-regular fa-trash-can"></i></button>
+                <?php $i = 1; while ($cat = $categories->fetch_assoc()): ?>
+
+                <tr
+                    class="border-t hover:bg-gray-50 transition-colors duration-300 cursor-move"
+                    id="cat-row-<?= $cat['id'] ?>"
+                    data-id="<?= $cat['id'] ?>"
+                >
+
+                    <td class="p-3 text-gray-600">
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-400">☰</span>
+                        <?= $i++; ?>
+                    </div>
+                    </td>
+
+                    <td class="p-3 font-medium">
+                    <?= htmlspecialchars($cat['name']) ?>
+                    </td>
+
+                    <td class="p-3 space-x-2 cta">
+
+                    <a href="cat_edit.php?id=<?= $cat['id'] ?>"
+                        class="px-2 py-1 text-sm hover:text-primary">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+
+                    <button
+                        class="px-2 py-1 text-sm hover:text-primary delete-btn"
+                        data-id="<?= $cat['id'] ?>">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+
+                    </td>
+
+                </tr>
+
+                <?php endwhile; ?>
+
+            <?php else: ?>
+
+                <tr>
+                <td colspan="4" class="text-center p-4 text-gray-500">
+                    No categories found.
                 </td>
-              </tr>
-            <?php endwhile; ?>
-          <?php else: ?>
-            <tr>
-              <td colspan="4" class="text-center p-4 text-gray-500">No categories found.</td>
-            </tr>
-          <?php endif; ?>
-        </tbody>
+                </tr>
+
+            <?php endif; ?>
+            </tbody>
       </table>
     </section>
   </div>
@@ -154,8 +183,52 @@ $(document).ready(function () {
         }
     }
 });
-</script>
 
+$(function () {
+
+    $('#sortable-categories').sortable({
+
+        placeholder: "bg-yellow-100",
+
+        update: function () {
+
+            let order = [];
+
+            $('#sortable-categories tr').each(function(index) {
+
+                order.push({
+                    id: $(this).data('id'),
+                    position: index + 1
+                });
+
+            });
+
+            $.ajax({
+                url: 'update_category_order.php',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(order),
+
+                success: function(response) {
+
+                    console.log(response);
+
+                    showToast('Category order updated successfully');
+
+                },
+
+                error: function() {
+
+                    showToast('Error updating category order', 'error');
+
+                }
+            });
+
+        }
+    });
+
+});
+</script>
 
 <?php include '_footer.php'; ?>
 

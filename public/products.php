@@ -5,7 +5,9 @@ $conn = getDbConnection();
 
 // ✅ Updated category map safely
 $categoryMap = [];
-$catRes = $conn->query("SELECT id, name FROM categories");
+$catRes = $conn->query("SELECT id, name 
+    FROM categories
+    ORDER BY sort_order ASC, id DESC");
 while ($catRow = $catRes->fetch_assoc()) {
     if (isset($catRow['id']) && isset($catRow['name'])) {
         $categoryMap[$catRow['id']] = $catRow['name'];
@@ -34,7 +36,7 @@ include '_header.php';
     <div class="categoryMenu filter-button-group button-group mt-4 js-radio-button-group">
         <button class="button is-checked category-btn" data-filter="*" data-category-id="all">All</button>
         <?php 
-        $categoryQuery = $conn->query("SELECT id, name FROM categories ORDER BY name ASC");
+        $categoryQuery = $conn->query("SELECT id, name FROM categories ORDER BY sort_order ASC, id DESC");
         while ($catButton = $categoryQuery->fetch_assoc()): 
             $catId = $catButton['id'];
             $catName = htmlspecialchars($catButton['name']);
@@ -72,7 +74,11 @@ include '_header.php';
         </div>
 
         <?php
-        $catQuery = $conn->query("SELECT DISTINCT category_id FROM products ORDER BY category_id ASC");
+        $catQuery = $conn->query("SELECT DISTINCT c.id AS category_id
+                                  FROM categories c
+                                  INNER JOIN products p ON p.category_id = c.id
+                                  ORDER BY c.sort_order ASC, c.id DESC");
+
         while ($cat = $catQuery->fetch_assoc()):
             $categoryID = $cat['category_id'];
             $productQuery = $conn->query("SELECT * FROM products WHERE category_id = '{$categoryID}' ORDER BY id DESC");
