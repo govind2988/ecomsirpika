@@ -83,7 +83,34 @@ function sortLink($column, $label, $currentSort, $currentOrder, $search)
 <main class="p-6 mt-16 space-y-4">
 
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Products</h2>
+         <!-- SEARCH FORM -->
+    <div class="mb-4 flex gap-3 items-center">
+        <div class="relative flex-1 md:w-80">
+            <input
+                type="text"
+                id="productSearch"
+                placeholder="Search product name or ID..."
+                class="border border-gray-300 rounded px-4 py-2 w-full pr-10"
+                onkeyup="filterProducts()"
+            >
+            <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+            <button 
+                type="button"
+                id="clearSearchBtn"
+                onclick="clearSearch()"
+                class="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer hidden"
+                title="Clear search"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div id="searchStats" class="text-sm text-gray-600 whitespace-nowrap">
+            Showing all products
+        </div>
+    </div>
+
+    
 
         <div class="space-x-3">
             <a href="upload_stock.php"
@@ -98,35 +125,13 @@ function sortLink($column, $label, $currentSort, $currentOrder, $search)
         </div>
     </div>
 
-    <!-- SEARCH FORM -->
-    <form method="GET" class="mb-4 flex gap-3">
-        <input
-            type="text"
-            name="search"
-            value="<?= htmlspecialchars($search) ?>"
-            placeholder="Search product name..."
-            class="border border-gray-300 rounded px-4 py-2 w-full md:w-80"
-        >
-
-        <button
-            type="submit"
-            class="bg-primary text-white px-5 py-2 rounded">
-            Search
-        </button>
-
-        <?php if (!empty($search)): ?>
-            <a href="products.php"
-               class="bg-gray-500 text-white px-5 py-2 rounded">
-                Reset
-            </a>
-        <?php endif; ?>
-    </form>
+   
 
     <section class="grid grid-cols-1 gap-6">
 
         <div class="flex flex-col md:col-span-2 md:row-span-2 bg-white shadow rounded-lg">
 
-            <div class="flex-grow overflow-x-auto">
+            <div class="flex-grow overflow-x-auto scrollTable">
 
                 <table id="order-table" class="min-w-full bg-white">
 
@@ -170,13 +175,13 @@ function sortLink($column, $label, $currentSort, $currentOrder, $search)
 
                         <?php while ($row = $result->fetch_assoc()): ?>
 
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-gray-50 product-row" data-product-id="<?= (int)$row['id'] ?>" data-product-name="<?= strtolower(htmlspecialchars($row['name'])) ?>">
 
                                 <td class="py-2 px-4 border-b">
                                     <?= $row['id'] ?>
                                 </td>
 
-                                <td class="py-2 px-4 border-b">
+                                <td class="py-2 px-4 border-b product-name">
                                     <?= htmlspecialchars($row['name']) ?>
                                 </td>
 
@@ -248,5 +253,97 @@ function sortLink($column, $label, $currentSort, $currentOrder, $search)
     </section>
 
 </main>
+
+<script>
+// ✅ Real-time Product Search Functionality
+let searchTimeout;
+
+function filterProducts() {
+    clearTimeout(searchTimeout);
+    
+    // Debounce search to avoid excessive DOM updates
+    searchTimeout = setTimeout(() => {
+        const searchInput = document.getElementById('productSearch').value.toLowerCase().trim();
+        const clearBtn = document.getElementById('clearSearchBtn');
+        const searchStats = document.getElementById('searchStats');
+        const rows = document.querySelectorAll('.product-row');
+        
+        // Show/hide clear button
+        if (searchInput.length > 0) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const productId = row.getAttribute('data-product-id');
+            const productName = row.getAttribute('data-product-name');
+
+            // Search by product name or ID
+            const matchesSearch = 
+                productName.includes(searchInput) || 
+                productId.includes(searchInput);
+
+            if (matchesSearch) {
+                row.style.display = 'table-row';
+                visibleCount++;
+                
+                // Highlight matching text in product name
+                if (searchInput.length > 0) {
+                    const nameCell = row.querySelector('.product-name');
+                    const originalName = nameCell.textContent;
+                    const regex = new RegExp(`(${searchInput})`, 'gi');
+                    nameCell.innerHTML = originalName.replace(regex, '<mark class="bg-yellow-200 font-semibold">$1</mark>');
+                }
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update search stats
+        if (searchInput.length === 0) {
+            searchStats.textContent = 'Showing all products';
+            // Remove highlights when search is cleared
+            document.querySelectorAll('mark').forEach(mark => {
+                mark.replaceWith(mark.textContent);
+            });
+        } else {
+            const totalProducts = rows.length;
+            searchStats.innerHTML = `<span class="font-semibold text-gray-800">${visibleCount}</span> of <span class="font-semibold text-gray-800">${totalProducts}</span> products`;
+            
+            if (visibleCount === 0) {
+                searchStats.innerHTML += ' <span class="text-red-600 ml-2">No products found</span>';
+            }
+        }
+
+        // Show/hide no products message
+        const noProductsRow = document.querySelector('tr[colspan="7"]');
+        if (noProductsRow) {
+            noProductsRow.parentElement.parentElement.style.display = visibleCount === 0 && searchInput.length > 0 ? 'table-row' : 'none';
+        }
+    }, 300); // 300ms debounce
+}
+
+function clearSearch() {
+    document.getElementById('productSearch').value = '';
+    document.getElementById('clearSearchBtn').classList.add('hidden');
+    document.getElementById('productSearch').focus();
+    
+    // Remove highlights
+    document.querySelectorAll('mark').forEach(mark => {
+        mark.replaceWith(mark.textContent);
+    });
+    
+    // Show all rows
+    document.querySelectorAll('.product-row').forEach(row => {
+        row.style.display = 'table-row';
+    });
+    
+    // Reset stats
+    document.getElementById('searchStats').textContent = 'Showing all products';
+}
+</script>
 
 <?php include '_footer.php'; ?>

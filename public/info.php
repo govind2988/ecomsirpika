@@ -28,8 +28,8 @@ include '_header.php';
 
 <main class="container text-gray-800 mt-8">
   <div class="mx-auto px-4">
-   <h1 class="text-3xl font-bold mb-6"><?= htmlspecialchars($page['title']) ?></h1>
-    <div class="bg-white p-6 rounded shadow leading-relaxed text-gray-700">
+   <h1 class="text-4xl font-bold mt-4 mb-2"><?= htmlspecialchars($page['title']) ?></h1>
+    <div class="bg-white text-gray-700">
       <?= $page['content'] ?>
     </div>
   </div>

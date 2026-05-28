@@ -33,15 +33,15 @@ include '_header.php';
 <!-- Product Section -->
 <section class="productsList mt-0" id="onlineOrder">
 
-    <div class="categoryMenu filter-button-group button-group mt-4 js-radio-button-group">
-        <button class="button is-checked category-btn" data-filter="*" data-category-id="all">All</button>
+    <div class="categoryMenu owl-carousel filter-button-group button-group mt-4 js-radio-button-group">
+        <div class="item"><button class="button is-checked category-btn" data-filter="*" data-category-id="all">All</button></div>
         <?php 
         $categoryQuery = $conn->query("SELECT id, name FROM categories ORDER BY sort_order ASC, id DESC");
         while ($catButton = $categoryQuery->fetch_assoc()): 
             $catId = $catButton['id'];
             $catName = htmlspecialchars($catButton['name']);
         ?>
-        <button class="button category-btn" data-filter="[data-category-id='<?= $catId ?>']" data-category-id="<?= $catId ?>"><?= $catName ?></button>
+        <div class="item"><button class="button category-btn" data-filter="[data-category-id='<?= $catId ?>']" data-category-id="<?= $catId ?>"><?= $catName ?></button></div>
         <?php endwhile; ?>
     </div>
 
@@ -189,17 +189,133 @@ include '_header.php';
   </div>
 </div>
 
+<style>
+  /* Category menu navigation middle alignment */
+  .categoryMenu .owl-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    padding: 0 10px;
+    pointer-events: none;
+  }
+
+  .categoryMenu .owl-nav button {
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .categoryMenu .owl-nav button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .categoryMenu {
+    position: relative;
+  }
+
+  /* Go to Top Button Styling */
+  .goToTopBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #fbbf24;
+    color: #b91c1c;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 40;
+  }
+
+  .goToTopBtn.show {
+    display: flex;
+  }
+
+  .goToTopBtn:hover {
+    background-color: #f59e0b;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .goToTopBtn:active {
+    transform: translateY(-1px);
+  }
+</style>
+
 <script>
 $(document).ready(function () {
-  $('.owl-carousel').owlCarousel({
+  // Product carousel (if exists)
+  $('.owl-carousel:not(.categoryMenu)').owlCarousel({
     items: 1,
     loop: true,
     autoplay: true,
     autoplayTimeout: 4000,
     dots: true
   });
-});
 
+  // Category menu carousel - enable only on screens below 640px (mobile)
+  var $categoryMenu = $('.categoryMenu.owl-carousel');
+  var $categoryContainer = $categoryMenu.closest('.productsList');
+  
+  function initCategoryCarousel() {
+    var screenWidth = $(window).width();
+    
+    // Enable carousel only on screens below 640px
+    if (screenWidth < 640) {
+      if ($categoryMenu.hasClass('owl-carousel')) {
+        if ($categoryMenu.data('owl.carousel')) {
+          $categoryMenu.trigger('destroy.owl.carousel');
+        }
+        $categoryMenu.owlCarousel({
+          items: 2,
+          responsive: {
+            0: { items: 2 },
+            480: { items: 3 }
+          },
+          loop: false,
+          margin: 10,
+          autoplay: false,
+          nav: true,
+          navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+          dots: false,
+          smartSpeed: 500
+        });
+      }
+    } else {
+      // Destroy carousel on larger screens
+      if ($categoryMenu.data('owl.carousel')) {
+        $categoryMenu.trigger('destroy.owl.carousel');
+      }
+    }
+  }
+  
+  // Initialize on load and window resize
+  setTimeout(initCategoryCarousel, 100);
+  $(window).on('resize', function() {
+    initCategoryCarousel();
+  });
+});
+</script>
+
+
+
+<script>
 // ✅ Updated functions skip out-of-stock products
 function adjustQty(id, delta) {
   const input = document.getElementById('qty_' + id);
@@ -366,7 +482,34 @@ document.querySelectorAll(".category-btn").forEach(button => {
     }
   });
 });
+
+// ✅ Go to Top functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const goToTopBtn = document.getElementById('goToTopBtn');
+  
+  if (goToTopBtn) {
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        goToTopBtn.classList.add('show');
+      } else {
+        goToTopBtn.classList.remove('show');
+      }
+    });
+
+    goToTopBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+});
 </script>
+
+<!-- Go to Top Button -->
+<button id="goToTopBtn" class="goToTopBtn" title="Go to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
 
 </main>
 

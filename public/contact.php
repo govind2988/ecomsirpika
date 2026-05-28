@@ -182,7 +182,7 @@ include '_header.php';
             <input type="email" placeholder="Email" name="email" required class="w-full border p-2 rounded" />
           </div>
            <div class="mb-4">
-            <label>Mobile:</label>
+          
             <input type="text" placeholder="Mobile" name="phone" required class="w-full border p-2 rounded" />
           </div>
           <div class="mb-4">

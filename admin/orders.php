@@ -243,7 +243,38 @@ include '_header.php';
         </div>
     <?php endif; ?>
 
-    <section class="overflow-x-auto bg-white shadow rounded-lg">
+  
+
+    <!-- Search and Filter Section -->
+    <div class="ordersFilter mb-8 p-0 bg-white shadow-md rounded">
+        <div class="w-full flex flex-col sm:flex-row items-center justify-center sm:gap-4 search-filters p-4">
+            <div class="w-full sm:w-3/5 relative">
+                <input 
+                    id="searchInput" 
+                    class="search w-full py-3 pl-10 pr-4 border border-gray-300 rounded outline-none transition-all duration-200 placeholder-gray-500 text-gray-700" 
+                    placeholder="Search by Order ID or Customer Name..."  
+                    onkeyup="filterOrders()">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+
+            <div class="w-full sm:w-2/5 relative">
+                <select 
+                    id="statusFilter" 
+                    class="w-full px-4 py-3 pl-4 pr-10 border border-gray-300 rounded bg-white text-gray-700 outline-none transition-all duration-200 appearance-none cursor-pointer font-medium" 
+                    onchange="filterOrders()">
+                    <option value="">All Status</option>
+                    <option value="New Order">New Order</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+            </div>
+        </div>
+    </div>
+
+    <section class="overflow-x-auto bg-white shadow rounded-lg scrollTable">
         <table id="order-table11" class="min-w-full bg-white border-gray-300">
             <thead class="bg-gray-200 text-gray-700">
                 <tr>
@@ -299,7 +330,7 @@ include '_header.php';
             </thead>
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50 order-row" data-order-id="<?= (int)$row['id'] ?>" data-customer-name="<?= strtolower(htmlspecialchars($row['customer_name'])) ?>" data-status="<?= htmlspecialchars($row['status']) ?>">
                         <td class="py-2 px-4 border-b"><?= (int)$row['id'] ?></td>
                         <td class="py-2 px-4 border-b"><?= htmlspecialchars($row['customer_name']) ?></td>
                         <td class="py-2 px-4 border-b">₹<?= number_format((float)$row['total'], 2) ?></td>
@@ -445,6 +476,50 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('statusModal').classList.remove('hidden');
     }
 });
+
+// ✅ Filter Orders functionality
+function filterOrders() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const rows = document.querySelectorAll('.order-row');
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const orderId = row.getAttribute('data-order-id');
+        const customerName = row.getAttribute('data-customer-name');
+        const status = row.getAttribute('data-status');
+
+        const matchSearch = 
+            orderId.includes(searchInput) || 
+            customerName.includes(searchInput);
+        
+        const matchStatus = !statusFilter || status === statusFilter;
+
+        if (matchSearch && matchStatus) {
+            row.style.display = 'table-row';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Show/hide no results message
+    let noMsg = document.getElementById('noOrdersMsg');
+    
+    if (visibleCount === 0) {
+        if (!noMsg) {
+            noMsg = document.createElement('div');
+            noMsg.id = 'noOrdersMsg';
+            noMsg.className = 'text-center text-red-600 text-lg font-semibold my-6';
+            noMsg.innerText = 'No orders found matching your search.';
+            document.querySelector('.scrollTable').after(noMsg);
+        }
+        noMsg.style.display = 'block';
+    } else if (noMsg) {
+        noMsg.style.display = 'none';
+    }
+}
 </script>
 
 <?php include '_footer.php'; ?>

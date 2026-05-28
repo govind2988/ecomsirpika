@@ -107,7 +107,7 @@ include '_header.php';
         <input type="text" name="name" value="<?= htmlspecialchars($catData['name'] ?? '') ?>" class="w-full border px-3 py-2 rounded mb-4" required>
 
         <label class="block font-semibold mb-1">Description</label>
-        <input type="text" name="description" value="<?= htmlspecialchars($catData['description'] ?? '') ?>" class="w-full border px-3 py-2 rounded mb-4" required>
+        <input type="text" name="description" value="<?= htmlspecialchars($catData['description'] ?? '') ?>" class="w-full border px-3 py-2 rounded mb-4">
 
         <div class="mt-6 row">
           <button type="submit" class="bg-primary font-semibold uppercase text-white px-4 py-2 rounded w-auto mr-4">

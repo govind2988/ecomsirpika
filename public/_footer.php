@@ -7,7 +7,7 @@
 
 <div class="whatsAppOrder">
     <span class="whatsapp-icon">
-      <a href="https://api.whatsapp.com/send?phone=+916381451509&amp;text=Hi Team, I would like order millet products can you share me more details."
+      <a href="https://api.whatsapp.com/send?phone=+916381451509&amp;text=Hi Team, I would like to enquire about bulk orders for Sirpika Millets products for my business/personal requirements. Please share more details about your available products, pricing, minimum order quantity, delivery options, and wholesale offers. Thank you!"
         target="_blank">
         <img src="./assets/images/whatsapp_white.svg" alt="Sirpika Millets Online Order" />
       </a>

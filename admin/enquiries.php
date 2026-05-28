@@ -21,6 +21,7 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
         <tr class="bg-gray-200">
           <th class="px-4 py-2 border w-20">#</th>
           <th class="px-4 py-2 border">Name</th>
+          <th class="px-4 py-2 border">Mobile</th>
           <th class="px-4 py-2 border">Email</th>
           <th class="px-4 py-2 border w-1/3">Message</th>
           <th class="px-4 py-2 border">Date</th>
@@ -31,6 +32,7 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
 		  <tr>
 			<td class="border px-4 py-2"><?= $row['id'] ?></td>
 			<td class="border px-4 py-2"><?= htmlspecialchars($row['name']) ?></td>
+			<td class="border px-4 py-2"><?= htmlspecialchars($row['phone']) ?></td>
 			<td class="border px-4 py-2"><?= htmlspecialchars($row['email']) ?></td>
 			<td class="border px-4 py-2">
 			  <div class="contMsg"><?= htmlspecialchars($row['message']) ?></div>
@@ -41,7 +43,7 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
 	  </tbody>
     </table>
     <?php else: ?>
-      <p>No messages found.</p>
+      <p class="text-center text-red-600 text-lg font-semibold my-6">No messages found.</p>
     <?php endif; ?>
     </section>
 </main>

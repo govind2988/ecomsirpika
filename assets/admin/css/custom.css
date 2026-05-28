@@ -602,3 +602,8 @@ table.dataTable.nowrap th, table.dataTable.nowrap td{
 .text-primary{
     color: #34495e !important;
 }
+
+.scrollTable{
+    max-height: 70vh;
+    overflow-y: auto;
+}

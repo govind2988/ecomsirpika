@@ -52,9 +52,9 @@
         font-size: 15px;
         padding: 0 15px;
     }
-    .filter-button-group{
+    /* .filter-button-group{
         flex-wrap: wrap;
-    }
+    } */
 }
 
 
@@ -343,6 +343,17 @@ p.price{
     }
     header .fa-shopping-cart{
         font-size: 18px;
+    }
+    .filter-button-group button{
+        white-space: wrap;
+        width: 100%;
+    }
+
+    .categoryMenu.owl-carousel .owl-nav button.owl-prev{
+        margin-left: -40px;
+    }
+    .categoryMenu.owl-carousel .owl-nav button.owl-next{
+        margin-right: -40px;
     }
 }
 
