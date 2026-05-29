@@ -32,7 +32,6 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
 		  <tr>
 			<td class="border px-4 py-2"><?= $row['id'] ?></td>
 			<td class="border px-4 py-2"><?= htmlspecialchars($row['name']) ?></td>
-			<td class="border px-4 py-2"><?= htmlspecialchars($row['phone']) ?></td>
 			<td class="border px-4 py-2"><?= htmlspecialchars($row['email']) ?></td>
 			<td class="border px-4 py-2">
 			  <div class="contMsg"><?= htmlspecialchars($row['message']) ?></div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 25, 2026 at 02:58 AM
+-- Generation Time: May 29, 2026 at 06:44 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.3.30
 
@@ -85,10 +85,10 @@ INSERT INTO `categories` (`id`, `name`, `description`, `status`, `created_at`, `
 (17, 'test8', 'test8', 'Active', '2026-05-25 02:41:32', 8),
 (18, 'test9', 'test9', 'Active', '2026-05-25 02:41:44', 7),
 (19, 'test10', 'test10', 'Active', '2026-05-25 02:41:55', 6),
-(20, 'test11', 'test11', 'Active', '2026-05-25 02:42:07', 5),
-(21, 'test12', 'test12', 'Active', '2026-05-25 02:42:14', 1),
-(22, 'test13', 'test13', 'Active', '2026-05-25 02:42:26', 4),
-(23, 'test14', 'test14', 'Active', '2026-05-25 02:42:36', 3),
+(20, 'test11', 'test11', 'Active', '2026-05-25 02:42:07', 1),
+(21, 'test12', 'test12', 'Active', '2026-05-25 02:42:14', 3),
+(22, 'test13', 'test13', 'Active', '2026-05-25 02:42:26', 5),
+(23, 'test14', 'test14', 'Active', '2026-05-25 02:42:36', 4),
 (24, 'test15', 'test15', 'Active', '2026-05-25 02:42:44', 2);
 
 -- --------------------------------------------------------
@@ -142,8 +142,19 @@ CREATE TABLE `enquiries` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `message` text NOT NULL,
-  `submitted_at` datetime DEFAULT current_timestamp()
+  `submitted_at` datetime DEFAULT current_timestamp(),
+  `mobile` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `enquiries`
+--
+
+INSERT INTO `enquiries` (`id`, `name`, `email`, `message`, `submitted_at`, `mobile`) VALUES
+(8, 'Chendoor 77', 'test@sk.com', 'test', '2026-05-29 09:41:40', ''),
+(9, 'test', 'test@sk.com', 'test2', '2026-05-29 09:48:29', ''),
+(10, 'test', 'test@sk.com', 'test5', '2026-05-29 09:56:26', '09123456789'),
+(11, 'Chendoor 77', 'test@sk.com', 'test6', '2026-05-29 09:59:41', '09123456789');
 
 -- --------------------------------------------------------
 
@@ -412,7 +423,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `enquiries`
 --
 ALTER TABLE `enquiries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `orders`

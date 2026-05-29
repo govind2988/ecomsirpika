@@ -21,21 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['captcha']);
 
         $name    = htmlspecialchars(trim($_POST['name'] ?? ''));
+        $mobile  = htmlspecialchars(trim($_POST['mobile'] ?? ''));
         $email   = htmlspecialchars(trim($_POST['email'] ?? ''));
         $msg     = htmlspecialchars(trim($_POST['message'] ?? ''));
 
-        if (!$name || !$email || !$msg) {
+        if (!$name || !$mobile || !$email || !$msg) {
             $message = "❌ All fields are required.";
         } else {
-            $stmt = $conn->prepare("INSERT INTO enquiries (name, email, message) VALUES (?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO enquiries (name, mobile, email, message) VALUES (?, ?, ?, ?)");
             if ($stmt) {
-                $stmt->bind_param("sss", $name, $email, $msg);
+                $stmt->bind_param("ssss", $name, $mobile, $email, $msg);
                 if ($stmt->execute()) {
                     // ✅ Send email to admin
-                    $adminEmail = $settings['contact_email']; // replace with real admin email
+                    $adminEmail = $siteLevelsettings['contact_email']; // replace with real admin email
                     $subject = "New Contact Form Submission";
                     $body = "You have received a new message from the contact form:\n\n"
                           . "Name: $name\n"
+                          . "Mobile: $mobile\n"
                           . "Email: $email\n"
                           . "Message:\n$msg\n";
                     $headers = "From: admin@example.com\r\n" .  // use a real domain
