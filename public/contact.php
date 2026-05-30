@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$name || !$mobile || !$email || !$msg) {
             $message = "❌ All fields are required.";
+        } elseif (!preg_match('/^[0-9]{1,15}$/', $mobile)) {
+            $message = "❌ Mobile number must contain only digits and be maximum 15 characters.";
         } else {
             $stmt = $conn->prepare("INSERT INTO enquiries (name, mobile, email, message) VALUES (?, ?, ?, ?)");
             if ($stmt) {
@@ -185,7 +187,7 @@ include '_header.php';
           </div>
            <div class="mb-4">
           
-            <input type="text" placeholder="Mobile" name="mobile" required class="w-full border p-2 rounded" />
+            <input type="tel" placeholder="Mobile" name="mobile" pattern="[0-9]{1,15}" maxlength="15" required class="w-full border p-2 rounded" />
           </div>
           <div class="mb-4">
             <textarea placeholder="Message" name="message" required class="w-full h-32 border p-2 rounded"></textarea>

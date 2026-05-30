@@ -31,11 +31,12 @@ $res = $conn->query("SELECT * FROM enquiries ORDER BY submitted_at DESC");
 		  <tr>
 			<td class="border px-4 py-2"><?= $row['id'] ?></td>
 			<td class="border px-4 py-2"><?= htmlspecialchars($row['name']) ?></td>
-			<td class="border px-4 py-2"><?= htmlspecialchars($row['email']) ?></td>
+			<td class="border px-4 py-2"><?= htmlspecialchars($row['mobile']) ?></td>
+      <td class="border px-4 py-2"><?= htmlspecialchars($row['email']) ?></td>
 			<td class="border px-4 py-2">
 			  <div class="contMsg"><?= htmlspecialchars($row['message']) ?></div>
 			</td>
-			<td class="border px-4 py-2"><?= $row['submitted_at'] ?></td>
+			<td class="border px-4 py-2"><?= (new DateTime($row['submitted_at']))->format('d/m/Y h:i A') ?></td>
 		  </tr>
 		  <?php endwhile; ?>
 	  </tbody>
