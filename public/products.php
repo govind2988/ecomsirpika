@@ -90,7 +90,7 @@ include '_header.php';
                     <h2 class="cathead"><?= htmlspecialchars($categoryName) ?></h2>
                 </div>
 
-                <div class="productGrid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+                <div class="productGrid grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                     <?php while ($row = $productQuery->fetch_assoc()):
                         $rrp = (float)$row['rrp_price'];
                         $sale = (float)$row['sale_price'];
@@ -120,7 +120,7 @@ include '_header.php';
                                 </figure>
                             </div>
 
-                            <div class="content p-4 flex flex-col flex-grow">
+                            <div class="content p-3 flex flex-col flex-grow">
                                 <h2 class="text-lg font-semibold text-gray-800 mb-2"><?= htmlspecialchars($row['name']) ?></h2>
 
                                 <?php if (!empty($row['description'])): ?>
@@ -225,7 +225,7 @@ include '_header.php';
   /* Go to Top Button Styling */
   .goToTopBtn {
     position: fixed;
-    bottom: 30px;
+    bottom: 10px;
     right: 30px;
     width: 50px;
     height: 50px;

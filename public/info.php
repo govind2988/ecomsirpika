@@ -25,11 +25,20 @@ include '_header.php';
 ?>
 
 
+  <div class="innerBanner">
+    <div class="container-fluid p-0">
+      <img src="assets/images/InnerBanner.jpg" alt="Sirpika Millets" />
+      <h2 class="title"><?= htmlspecialchars($page['title']) ?></h2>
+    </div>
+  </div>
+
 
 <main class="container text-gray-800 mt-8">
   <div class="mx-auto px-4">
-   <h1 class="text-4xl font-bold mt-4 mb-2"><?= htmlspecialchars($page['title']) ?></h1>
-    <div class="bg-white text-gray-700">
+   <!-- <h1 class="text-4xl font-bold mt-4 mb-2"><?= htmlspecialchars($page['title']) ?></h1> -->
+
+
+    <div class="text-gray-700">
       <?= $page['content'] ?>
     </div>
   </div>

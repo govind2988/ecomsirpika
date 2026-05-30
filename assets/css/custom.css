@@ -202,6 +202,7 @@ section{
 
 .trendingProducts .item img{
    width: 100%;
+   border-radius: 16px;
 }
 
 h1.head{
@@ -247,6 +248,7 @@ h1.head{
 
 .products-section .left img{
    width: 100%;
+   border-radius: 16px;
 }
 
 .btn-primary{
@@ -269,9 +271,14 @@ h1.head{
 .productList .item{
    display: flex;
    flex-direction: column;
-  
+  border-radius: 8px;
    margin-bottom: 20px;
 }
+
+.productGrid .item{
+   border-radius: 8px;
+}
+
 
 .productList .item .content{
    padding: 20px 10px;
@@ -560,8 +567,9 @@ ul.socialMedia{
    justify-content: center;
    background: #fff;
    border: 1px solid #1ABC9C;
-   padding: 2rem;
+   padding: 1rem;
    border-radius: 0.5rem;
+   gap: 1rem;
 }
 
 .contact-section .contact-information .contact-address {
@@ -660,7 +668,7 @@ ul.socialMedia{
 
 .contact-map iframe{
    width: 100%;
-   height: 200px;
+   height: 250px;
 }
 
 .contact-information{
@@ -728,7 +736,7 @@ figure {
 
 .whatsAppOrder {
    position: fixed;
-   right: 70px;
+   right: 30px;
    bottom: 100px;
    border-radius: 50%;
    z-index: 99;
@@ -1057,7 +1065,7 @@ header{
  /* Go to Top Button Styling */
   .goToTopBtn {
     position: fixed;
-    bottom: 30px;
+    bottom: 0px;
     right: 30px;
     width: 50px;
     height: 50px;
@@ -1140,6 +1148,7 @@ header{
   }
 .about-content{
    padding-top: 20px;
+   margin: 0;
 }
 
 
@@ -1191,4 +1200,16 @@ header{
         padding:20px;
         border-radius:10px;
         margin-top:20px;
+    }
+
+    .category-section{
+      padding: 0 24px;
+    }
+
+    .productGrid .content h2{
+      font-family: "Rokkitt", serif;
+    }
+
+    .quantityControls{
+      margin-top: auto;
     }

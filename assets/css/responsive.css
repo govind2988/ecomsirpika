@@ -288,6 +288,9 @@ p.price{
         right: 30px;
         bottom: 40px;
     }
+    .category-section{
+        padding: 0;
+    }
 }
 
 @media only screen and (max-width: 640px) {
@@ -354,6 +357,31 @@ p.price{
     }
     .categoryMenu.owl-carousel .owl-nav button.owl-next{
         margin-right: -40px;
+    }
+    .addToCartBtn{
+        padding:4px !important;
+        height: 2.5rem !important;
+    }
+
+   .productGrid  .content {
+        padding: 1rem !important;
+    }
+    .cathead{
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+   .productGrid .shineEffect{
+        height: 150px;
+    }
+   .productGrid .text-lg{
+        font-size: 14px;
+    }
+    .productGrid .text-xl{
+        font-size: 18px;
+    }
+    .productGrid {
+        gap: 16px !important;
     }
 }
 

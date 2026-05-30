@@ -71,6 +71,15 @@ include '_header.php';
     });
   </script>
 
+
+
+  <div class="innerBanner">
+    <div class="container-fluid p-0">
+      <img src="assets/images/InnerBanner.jpg" alt="Sirpika Millets" />
+      <h2 class="title">Contact Us</h2>
+    </div>
+  </div>
+
 <main class="container">
  
 
