@@ -11,6 +11,10 @@ if ($env && is_array($env)) {
     }
 }
 
+if (!defined('ADMIN_SESSION_TIMEOUT')) {
+    define('ADMIN_SESSION_TIMEOUT', $_ENV['ADMIN_SESSION_TIMEOUT'] ?? 24 * 60 * 60);
+}
+
 if (!defined('BASE_URL')) {
     define('BASE_URL', $_ENV['BASE_URL'] ?? '/ecomsirpika/');
 }

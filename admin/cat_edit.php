@@ -1,5 +1,4 @@
 <?php
-include './../includes/auth.php';
 include './../includes/db.php';
 
 $conn = getDbConnection();

@@ -57,6 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
            
 
                 <form method="POST" class="max-w-md mt-6">
+                    <?php if (isset($_GET['timeout'])): ?>
+                        <p class="text-yellow-600 mt-4">Your session expired due to inactivity.</p>
+                    <?php endif; ?>
 
             <div class="mt-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
