@@ -25,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aj
 
 $cartCount = array_sum($_SESSION['cart'] ?? []);
 
+// $currentPage = basename($_SERVER['PHP_SELF']);
+
+$currentPage = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +50,8 @@ $cartCount = array_sum($_SESSION['cart'] ?? []);
 
 
 
- <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script> 
+ 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Colorbox CSS -->
@@ -78,6 +83,9 @@ $cartCount = array_sum($_SESSION['cart'] ?? []);
 
 
 <link rel="canonical" href="https://sirpikamillets.com/">
+
+
+
 
 
 
@@ -123,15 +131,13 @@ if (!empty($settings['google_analytics'])) {
               </a>
             </div>
 
-
-
                        
             <!-- Menu -->
             <nav class="hidden lg:flex space-x-6 uppercase deskMenu">
-              <a href="index.php" class="text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6">Home</a>
-              <a href="products.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">Products</a>
-              <a href="aboutus.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">About Us</a>
-              <a href="contact.php" class="text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="index.php" class=" <?= ($currentPage == 'index.php') ? 'text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6' : 'text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6' ?>">Home</a>
+              <a href="products.php" class="<?= ($currentPage == 'products.php') ? 'text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6' : 'text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6' ?>">Products</a>
+              <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6' : 'text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6' ?>">About Us</a>
+              <a href="contact.php" class="<?= ($currentPage == 'contact.php') ? 'text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-6' : 'text-gray-800 font-bold border-b-4 border-transparent hover:border-yellow-400 py-6' ?>">Contact Us</a>
             </nav>
 
 
