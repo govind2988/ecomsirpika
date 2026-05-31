@@ -104,7 +104,7 @@ if (!empty($settings['google_analytics'])) {
       </div>
 
        <!-- Sticky Header -->    
-      <header class="sticky top-0 z-30 bg-white shadow-md">
+      <header class="top-0 z-30 bg-white shadow-md">
                  
       <div class="container mx-auto flex items-center justify-between px-4">
            
@@ -173,7 +173,7 @@ if (!empty($settings['google_analytics'])) {
               <a href="index.php" class="text-primary font-bold border-b-4 border-yellow-400 hover:border-b-4 py-3">Home</a>
               <a href="products.php" class="text-white font-bold border-b border-gray-300 hover:border-yellow-400 py-6">Products</a>
               <a href="aboutus.php" class="text-white font-bold border-b border-gray-300  hover:border-yellow-400 py-6">About Us</a>
-              <a href="contactus.php" class="text-white font-bold border-b border-gray-300  hover:border-yellow-400 py-6">Contact Us</a>
+              <a href="contact.php" class="text-white font-bold border-b border-gray-300  hover:border-yellow-400 py-6">Contact Us</a>
             </nav>
 
         </div>
@@ -220,6 +220,7 @@ if (!empty($settings['google_analytics'])) {
           }
         });
       </script>
+
 
 
 

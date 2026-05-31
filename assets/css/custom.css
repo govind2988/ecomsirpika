@@ -590,6 +590,7 @@ ul.socialMedia{
    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
    background: #fff;
    height: 100%;
+   border-radius: 16px;
 }
 
 .question-section .review-form {
@@ -598,6 +599,7 @@ ul.socialMedia{
    margin-top: 0;
    padding: 2rem;
    background: #fff;
+    border-radius: 16px;
 }
 
 .review-form .review-form-text {
@@ -958,7 +960,9 @@ ul.productTab li.active, ul.productTab li:hover{
   100% { transform: translateX(-100%); } /* Move entirely to the left */
 }
 
-
+header.headerSticky{
+position: sticky;
+}
 header.headerSticky .logo img {
    height: 85px;
    top: -30px;
@@ -1212,4 +1216,9 @@ header{
 
     .quantityControls{
       margin-top: auto;
+    }
+
+
+    .contact-section {
+         padding: 0 24px;
     }

@@ -86,6 +86,9 @@
         font-size: 14px;
         padding: 8px 15px;
     }
+    .header.headerSticky{
+        padding: 0;
+    }
 
     header.headerSticky .logo img {
        height: 60px;
@@ -199,9 +202,9 @@ p.price{
     border-bottom: 1px solid #ddd;
 }
 
-.headerSticky{
+/* .headerSticky{
     position: relative !important;
-}
+} */
 
 .homeBanner .owl-item img{
     height: 300px;
@@ -213,6 +216,12 @@ p.price{
 .home-category .catItem{
     width: 20%;
 }
+
+.mobileViewMenu .fa-times{
+    color: #fff;
+}
+
+
 
 }
 
@@ -284,10 +293,21 @@ p.price{
     .product-content .productList .col-md-3 {
         width: 50%;
     }
-    .whatsAppOrder{
-        right: 30px;
-        bottom: 40px;
-    }
+  
+.whatsAppOrder span{
+        width: 40px;
+    height: 40px;
+}
+.whatsAppOrder span.whatsapp-icon img{
+    width: 25px;
+}
+
+.goToTopBtn{
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+}
+
     .category-section{
         padding: 0;
     }
@@ -383,10 +403,55 @@ p.price{
     .productGrid {
         gap: 16px !important;
     }
+    .about-content{
+    padding: 0;
+}
+
+.about-service .about-service-section{
+    gap: 20px;
+    align-items: start;
+    margin-top: 20px;
+   
+}
+
+.about-service .about-wrapper{
+ width: 46%;
+}
+
+.about-service{
+    padding: 0;
+}
+
+.about-service .about-wrapper .wrapper-img span img{
+    height: 40px;
+}
+.about-service .about-wrapper .wrapper-img span{
+    width: 80px;
+    height: 80px;
+}
+
+.about-content{
+    text-align: justify !important;
+}
+
+.categoryMenu {
+    margin-top: 0px !important;
+}
+
+.categoryMenu.owl-carousel{
+    margin-bottom: 0px !important;
+}
+.categoryMenu.owl-carousel .owl-stage{
+    padding: 0px !important;
+}
+
+
 }
 
 
 @media only screen and (max-width: 420px) {
-
+.about-service .about-wrapper{
+ width: 100%;
+}
 }
 
