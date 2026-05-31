@@ -88,10 +88,11 @@
     }
     .header.headerSticky{
         padding: 0;
+        top: 16px !important;
     }
 
     header.headerSticky .logo img {
-       height: 60px;
+       height: 40px;
         top: 0px;
         transition: all 0.3s ease;  
     }
@@ -237,9 +238,9 @@ p.price{
         padding-right: 15px;
         text-align: center;
     }
-    .products-section .left img{
+    /* .products-section .left img{
         max-width: fit-content;
-    }
+    } */
     .trendingProducts .item{
         margin-bottom: 20px;
     }
@@ -267,7 +268,8 @@ p.price{
         text-align: left;
     }
     .instagram-section{
-        margin-top: 0;
+        margin: 0;
+        padding: 0 16px;
     }
     .why-millets-section{
         margin-bottom: 0;
@@ -310,6 +312,10 @@ p.price{
 
     .category-section{
         padding: 0;
+    }
+
+    footer{
+        margin-top: 24px !important;
     }
 }
 
@@ -383,8 +389,8 @@ p.price{
         height: 2.5rem !important;
     }
 
-   .productGrid  .content {
-        padding: 1rem !important;
+   .productGrid .content {
+        padding: 0.5rem !important;
     }
     .cathead{
         font-size: 24px;
@@ -401,7 +407,7 @@ p.price{
         font-size: 18px;
     }
     .productGrid {
-        gap: 16px !important;
+        gap: 16px 8px !important;
     }
     .about-content{
     padding: 0;
@@ -439,10 +445,18 @@ p.price{
 }
 
 .categoryMenu.owl-carousel{
-    margin-bottom: 0px !important;
+    margin-bottom: 8px !important;
 }
 .categoryMenu.owl-carousel .owl-stage{
     padding: 0px !important;
+}
+
+.productsList{
+    padding: 10px !important;
+}
+
+.products-section{
+    padding: 40px 8px;
 }
 
 
@@ -453,5 +467,9 @@ p.price{
 .about-service .about-wrapper{
  width: 100%;
 }
+.footer-links{    
+    flex-direction: column !important;
+}
+
 }
 

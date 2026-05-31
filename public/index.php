@@ -383,7 +383,7 @@ $(document).ready(function () {
 
   // Product Slider - Multiple items visible
   $('#productSlider').owlCarousel({
-    items: 1,
+    items: 2,
     loop: true,
     autoplay: false,
     autoplayTimeout: 5000,
@@ -393,10 +393,10 @@ $(document).ready(function () {
     navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
     responsive: {
       480: {
-        items: 1
+        items: 2
       },
       768: {
-        items: 2
+        items: 3
       },
       992: {
         items: 3
@@ -406,7 +406,7 @@ $(document).ready(function () {
 
   // Instagram Slider - Multiple items visible
   $('#instaSlider').owlCarousel({
-    items: 4,
+    items: 2,
     loop: true,
     autoplay: false,
     autoplayTimeout: 4000,
@@ -414,7 +414,7 @@ $(document).ready(function () {
     nav: false,
     responsive: {
       480: {
-        items: 2
+        items: 3
       },
       768: {
         items: 3

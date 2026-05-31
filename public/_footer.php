@@ -16,14 +16,14 @@
   </div>
 
 <footer class="bg-gray-800 py-4 text-center mt-20">
-  <div class="container mx-auto text-sm text-white flex flex-col sm:flex-row justify-between gap-4 items-center">
+  <div class="container mx-auto text-sm text-white flex flex-col lg:flex-row justify-between gap-4 items-center">
    
 
     <div class="text-sm text-center sm:text-left">
       &copy; <?= date('Y') ?> <?=htmlspecialchars($settings['company_name'] ?? 'My Company') ?>. All rights reserved.
     </div>
 
-     <div class="flex flex-col sm:flex-row items-center gap-2">
+     <div class="flex flex-row items-center gap-2 footer-links">
       <a href="index.php" class="hover:underline hover:text-yellow-400">Home</a>  |  
     <a href="aboutus.php" class="hover:underline hover:text-yellow-400">About Us</a>  |  
     <a href="terms.php" class="hover:underline hover:text-yellow-400">Terms & Conditions</a>  |  

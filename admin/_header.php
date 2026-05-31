@@ -122,7 +122,7 @@ else
         <div class="flex flex-shrink-0 items-center ml-auto">
             
             <!-- Profile button -->
-            <a href="admin_profile.php" class="inline-flex items-center focus:outline-none rounded-lg hover:text-gray-300">
+            <a href="#" class="inline-flex items-center focus:outline-none rounded-lg hover:text-gray-300">
                 <span class="sr-only">User Menu</span>
                 <div class="hidden md:flex md:flex-col md:items-end md:leading-tight">
                     <span class="font-semibold">Admin</span>

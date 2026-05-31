@@ -56,7 +56,7 @@ section{
 
  footer {
      background-color: #f8f9fa;
-     padding: 20px 0;
+     padding: 20px;
  }
 
  h2.head{
@@ -1212,13 +1212,17 @@ header{
 
     .productGrid .content h2{
       font-family: "Rokkitt", serif;
+      line-height: normal;
     }
 
     .quantityControls{
-      margin-top: auto;
+      margin-top: auto !important;
     }
 
 
     .contact-section {
          padding: 0 24px;
+    }
+    #cboxCurrent{
+      display: none !important;
     }
