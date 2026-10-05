@@ -181,19 +181,23 @@ include '_header.php';
             <?php
             // Fetch 5 most recently added products
             $recentProductsQuery = $conn->query("SELECT * FROM products ORDER BY id DESC LIMIT 5");
+            $enableIndexBulk = defined('ENABLE_INDEX_BULK_ORDER') && ENABLE_INDEX_BULK_ORDER;
             if ($recentProductsQuery->num_rows > 0):
               while ($row = $recentProductsQuery->fetch_assoc()):
                 $rrp = (float)$row['rrp_price'];
                 $sale = (float)$row['sale_price'];
                 $basePrice = $sale > 0 ? $sale : $rrp;
-                $productId = $row['id'];
+                $productId = (int)$row['id'];
                 $productImage = !empty($row['image']) ? 'uploads/' . $row['image'] : 'assets/images/placeholder.png';
                 $cartQty = $cartQuantities[$productId] ?? 0;
+                $stock = isset($row['stock']) ? (int)$row['stock'] : 0;
+                $hasStock = $stock > 0;
+                $isItemBulk = !empty($bulkItems[$productId]);
                 $orderedValue = $basePrice * $cartQty;
             ?>
             <!-- Product Card -->
             <div class="item element-item product-card" data-category-id="<?= $row['category_id'] ?>">
-                <div class="item bg-white shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full flex flex-col">
+                <div class="product-card-inner bg-white shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full flex flex-col">
                     <!-- Image Section -->
                     <div class="zoomOut shineEffect overflow-hidden bg-gray-100 h-48 flex items-center justify-center">
                         <figure class="w-full h-full">
@@ -219,23 +223,49 @@ include '_header.php';
                         <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($row['description']) ?></p>
                         <?php endif; ?>
 
+                        <!-- Individual Bulk Order Checkbox Button (enabled via .env) -->
+                        <?php if ($enableIndexBulk): ?>
+                        <div class="mb-2">
+                            <label id="bulkBtn_<?= $productId ?>" class="bulk-product-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full cursor-pointer transition-all duration-200 select-none font-semibold text-xs <?= $isItemBulk ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                                <input type="checkbox" id="bulkCheck_<?= $productId ?>" class="hidden" <?= $isItemBulk ? 'checked' : '' ?> onchange="toggleProductBulk(<?= $productId ?>, this.checked)">
+                                <i id="bulkIcon_<?= $productId ?>" class="fa-solid <?= $isItemBulk ? 'fa-square-check text-white' : 'fa-square text-gray-500' ?>"></i>
+                                <span>Bulk Order</span>
+                            </label>
+                        </div>
+                        <?php endif; ?>
+
                         <!-- Price Section -->
                         <div class="pricing">                           
-                            <span class="text-red-600 font-bold text-xl">₹<span id="price_<?= $row['id'] ?>"><?= number_format($basePrice, 2) ?></span></span>
-                             <?php if ($rrp > $basePrice): ?>
-                            <span class="text-sm text-gray-400 line-through mr-2">₹<?= number_format($rrp, 2) ?></span>
+                            <span class="product-price-tag text-red-600 font-bold text-xl <?= ($enableIndexBulk && $isItemBulk) ? 'hidden' : '' ?>" id="price_wrap_<?= $productId ?>">₹<span id="price_<?= $row['id'] ?>"><?= number_format($basePrice, 2) ?></span></span>
+                            <?php if ($rrp > $basePrice): ?>
+                            <span class="product-rrp-tag text-sm text-gray-400 line-through mr-2 <?= ($enableIndexBulk && $isItemBulk) ? 'hidden' : '' ?>" id="rrp_wrap_<?= $productId ?>">₹<?= number_format($rrp, 2) ?></span>
                             <?php endif; ?>
-<br>
-                      <div class="text-sm text-green-500 font-medium <?= $cartQty > 0 ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
-                        Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
-                    </div>                            
+
+                            <?php if ($enableIndexBulk): ?>
+                            <span class="bulk-price-tag text-green-700 font-semibold text-sm <?= $isItemBulk ? '' : 'hidden' ?>" id="bulk_badge_<?= $productId ?>">
+                                <i class="fa-solid fa-boxes-stacked mr-1"></i>Bulk Order (Price on Request)
+                            </span>
+                            <?php endif; ?>
+
+                            <br>
+                            <?php if ($hasStock): ?>
+                            <div class="text-sm text-green-500 font-medium <?= ($cartQty > 0 && !($enableIndexBulk && $isItemBulk)) ? '' : 'invisible' ?>" id="ordered_value_<?= $productId ?>">
+                                Total Price: <?= $cartQty > 0 ? "₹" . number_format($orderedValue, 2) : '' ?>
+                            </div>
+                            <?php endif; ?>                            
                         </div>
+
 
                         <!-- Quantity Controls -->
                         <div class="mt-3 flex flex-col gap-2 quantityControls">
-                          <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700  transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
-                            <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
-                          </button>
+                          <?php if (!$hasStock): ?>
+                            <div class="out-of-stock-btn bg-gray-200 px-4 h-12 rounded-lg text-gray-600 font-semibold flex items-center justify-center cursor-not-allowed">
+                              <i class="fas fa-ban mr-2"></i>Out of Stock
+                            </div>
+                          <?php else: ?>
+                            <button id="addBtn_<?= $productId ?>" class="addToCartBtn bg-yellow-400 px-4 h-12 rounded-lg hover:bg-yellow-500 text-red-700 transition font-semibold <?= $cartQty > 0 ? 'hidden' : '' ?>" onclick="addToCart(<?= $productId ?>)">
+                              <i class="fa-solid fa-shopping-cart mr-2 text-red-700"></i>Add to Cart
+                            </button>
 
                             <div id="qtyDiv_<?= $productId ?>" class="<?= $cartQty > 0 ? 'flex' : 'hidden' ?> flex items-center justify-center gap-0 rounded-lg overflow-hidden">
                                 <button type="button" onclick="adjustQty(<?= $productId ?>, -1)" class="bg-yellow-400 text-red-700 hover:bg-yellow-500 px-3 py-3 h-12 font-bold text-lg transition flex items-center justify-center">
@@ -246,6 +276,7 @@ include '_header.php';
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
+                          <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -381,17 +412,25 @@ $(document).ready(function () {
     
   });
 
-  // Product Slider - Multiple items visible
+  // Product Slider - Multiple items visible, slide only with left/right navigation arrows
   $('#productSlider').owlCarousel({
     items: 2,
-    loop: true,
+    loop: false,
+    rewind: true,
     autoplay: false,
     autoplayTimeout: 5000,
-    margin: 10,
+    margin: 15,
     dots: true,
     nav: true,
+    mouseDrag: false,
+    touchDrag: false,
+    pullDrag: false,
+    freeDrag: false,
     navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
     responsive: {
+      0: {
+        items: 1
+      },
       480: {
         items: 2
       },
@@ -433,65 +472,181 @@ $(document).ready(function () {
   });
 });
 
+// Per-product Bulk Order Toggle and UI Updates
+function toggleProductBulk(productId, isChecked) {
+  setProductBulkState(productId, isChecked, true);
+}
+
+function setProductBulkState(productId, isChecked, notifyServer = true) {
+  const btns = document.querySelectorAll('#bulkBtn_' + productId);
+  const checkboxes = document.querySelectorAll('#bulkCheck_' + productId);
+  const icons = document.querySelectorAll('#bulkIcon_' + productId);
+  const priceWraps = document.querySelectorAll('#price_wrap_' + productId);
+  const rrpWraps = document.querySelectorAll('#rrp_wrap_' + productId);
+  const bulkBadges = document.querySelectorAll('#bulk_badge_' + productId);
+  const orderedEls = document.querySelectorAll('#ordered_value_' + productId);
+  const qtyInputs = document.querySelectorAll('#qty_' + productId);
+  const priceEls = document.querySelectorAll('#price_' + productId);
+
+  checkboxes.forEach(cb => { cb.checked = isChecked; });
+
+  btns.forEach(btn => {
+    if (isChecked) {
+      btn.className = "bulk-product-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full cursor-pointer transition-all duration-200 select-none font-semibold text-xs bg-green-600 text-white hover:bg-green-700";
+    } else {
+      btn.className = "bulk-product-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full cursor-pointer transition-all duration-200 select-none font-semibold text-xs bg-gray-200 text-gray-700 hover:bg-gray-300";
+    }
+  });
+
+  icons.forEach(icon => {
+    if (isChecked) icon.className = "fa-solid fa-square-check text-white";
+    else icon.className = "fa-solid fa-square text-gray-500";
+  });
+
+  priceWraps.forEach(pw => {
+    if (isChecked) pw.classList.add('hidden');
+    else pw.classList.remove('hidden');
+  });
+
+  rrpWraps.forEach(rw => {
+    if (isChecked) rw.classList.add('hidden');
+    else rw.classList.remove('hidden');
+  });
+
+  bulkBadges.forEach(bb => {
+    if (isChecked) bb.classList.remove('hidden');
+    else bb.classList.add('hidden');
+  });
+
+  const qty = qtyInputs.length > 0 ? (parseInt(qtyInputs[0].value) || 0) : 0;
+  const price = priceEls.length > 0 ? (parseFloat(priceEls[0].textContent) || 0) : 0;
+
+  orderedEls.forEach(el => {
+    if (qty > 0 && !isChecked) {
+      el.textContent = "Total Price: ₹" + (qty * price).toFixed(2);
+      el.classList.remove('invisible');
+    } else {
+      el.classList.add('invisible');
+    }
+  });
+
+  if (notifyServer) {
+    $.post("index.php", {
+      ajax: 'toggle_product_bulk',
+      product_id: productId,
+      is_bulk: isChecked ? 1 : 0
+    }, function (response) {
+      try {
+        const res = JSON.parse(response);
+        if (res.status === 'success') {
+          updateCartCount(res.cartCount);
+          if (isChecked && res.quantity !== undefined && res.quantity > 0) {
+            qtyInputs.forEach(input => { input.value = res.quantity; });
+            document.querySelectorAll('#addBtn_' + productId).forEach(b => b.classList.add('hidden'));
+            document.querySelectorAll('#qtyDiv_' + productId).forEach(d => d.classList.remove('hidden'));
+          }
+        }
+      } catch (e) {
+        console.error('Toggle bulk failed', e);
+      }
+    });
+  }
+}
+
+function isProductBulk(productId) {
+  const checkbox = document.querySelector('#bulkCheck_' + productId);
+  return checkbox ? checkbox.checked : false;
+}
+
 // Quantity +/- button
 function adjustQty(id, delta) {
-  const input = document.getElementById('qty_' + id);
-  let value = parseInt(input.value) || 0;
+  const inputs = document.querySelectorAll('#qty_' + id);
+  if (inputs.length === 0) return;
+
+  let value = parseInt(inputs[0].value) || 0;
   value += delta;
   if (value < 0) value = 0;
-  input.value = value;
+  inputs.forEach(input => { input.value = value; });
+
+  const minBulk = window.BULK_ORDER_QTY || 5;
+  if (isProductBulk(id) && value < minBulk) {
+    setProductBulkState(id, false, false);
+  }
+
   updateCart(id);
 }
 
 // Add to Cart button handler
 function addToCart(productId) {
-  const addBtn = document.getElementById('addBtn_' + productId);
-  const qtyDiv = document.getElementById('qtyDiv_' + productId);
-  const qtyInput = document.getElementById('qty_' + productId);
-  
+  const addBtns = document.querySelectorAll('#addBtn_' + productId);
+  const qtyDivs = document.querySelectorAll('#qtyDiv_' + productId);
+  const qtyInputs = document.querySelectorAll('#qty_' + productId);
+
+  if (qtyInputs.length === 0) return;
+
+  const isBulk = isProductBulk(productId);
+  const initialQty = isBulk ? (window.BULK_ORDER_QTY || 5) : 1;
+
   // Hide button, show quantity controls
-  addBtn.classList.add('hidden');
-  qtyDiv.classList.remove('hidden');
-  
-  // Set initial quantity to 1
-  qtyInput.value = 1;
+  addBtns.forEach(btn => btn.classList.add('hidden'));
+  qtyDivs.forEach(div => div.classList.remove('hidden'));
+  qtyInputs.forEach(input => { input.value = initialQty; });
+
   updateCart(productId);
 }
 
 // Update cart and UI
 function updateCart(productId) {
-  const qty = parseInt(document.getElementById('qty_' + productId).value) || 0;
-  const price = parseFloat(document.getElementById('price_' + productId).textContent) || 0;
-  const addBtn = document.getElementById('addBtn_' + productId);
-  const qtyDiv = document.getElementById('qtyDiv_' + productId);
+  const qtyInputs = document.querySelectorAll('#qty_' + productId);
+  const priceEls = document.querySelectorAll('#price_' + productId);
+  const addBtns = document.querySelectorAll('#addBtn_' + productId);
+  const qtyDivs = document.querySelectorAll('#qtyDiv_' + productId);
+  const orderedEls = document.querySelectorAll('#ordered_value_' + productId);
 
-  const orderedValue = qty * price;
-  const orderedEl = document.getElementById('ordered_value_' + productId);
+  if (qtyInputs.length === 0) return;
 
-  if (orderedEl) {
-    if (qty > 0) {
-      orderedEl.textContent = "Total Price: ₹" + orderedValue.toFixed(2);
-      orderedEl.classList.remove("invisible");
-    } else {
-      orderedEl.classList.add("invisible");
-    }
+  let qty = parseInt(qtyInputs[0].value) || 0;
+  if (qty < 0) qty = 0;
+  qtyInputs.forEach(input => { input.value = qty; });
+
+  const price = priceEls.length > 0 ? (parseFloat(priceEls[0].textContent) || 0) : 0;
+
+  const minBulk = window.BULK_ORDER_QTY || 5;
+  if (isProductBulk(productId) && qty < minBulk) {
+    setProductBulkState(productId, false, false);
   }
+
+  const isBulk = isProductBulk(productId);
+  const orderedValue = qty * price;
+
+  orderedEls.forEach(el => {
+    if (qty > 0 && !isBulk) {
+      el.textContent = "Total Price: ₹" + orderedValue.toFixed(2);
+      el.classList.remove("invisible");
+    } else {
+      el.classList.add("invisible");
+    }
+  });
 
   // If quantity is 0, show button and hide quantity controls
   if (qty === 0) {
-    addBtn.classList.remove('hidden');
-    qtyDiv.classList.add('hidden');
+    addBtns.forEach(btn => btn.classList.remove('hidden'));
+    qtyDivs.forEach(div => div.classList.add('hidden'));
   }
 
   $.post("index.php", {
     ajax: 'update_cart',
     product_id: productId,
-    quantity: qty
+    quantity: qty,
+    is_bulk: isBulk ? 1 : 0
   }, function (response) {
     try {
       const res = JSON.parse(response);
       if (res.status === 'success') {
         updateCartCount(res.cartCount);
+        if (res.isBulk !== undefined && res.isBulk !== isProductBulk(productId)) {
+          setProductBulkState(productId, res.isBulk, false);
+        }
       }
     } catch (e) {
       console.error('Cart update failed', e);
@@ -502,15 +657,15 @@ function updateCart(productId) {
 // Update the cart count badge in header
 function updateCartCount(count) {
   const cartLink = document.querySelector(".relative a"); // target <a> inside .relative
-  let badge = cartLink.querySelector(".cart-badge"); // use specific class
+  let badge = cartLink ? cartLink.querySelector(".cart-badge") : null;
 
   if (count > 0) {
-    if (!badge) {
+    if (!badge && cartLink) {
       badge = document.createElement("span");
       badge.className = "cart-badge absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs font-bold rounded-full px-1.5";
       cartLink.appendChild(badge);
     }
-    badge.textContent = count;
+    if (badge) badge.textContent = count;
   } else if (badge) {
     badge.remove();
   }

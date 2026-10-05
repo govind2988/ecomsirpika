@@ -141,33 +141,41 @@ section{
 }
 
 .owl-theme .owl-nav{
-   top:calc(50% - 50px);
+   top: calc(50% - 25px);
    position: absolute;
-   z-index: 999;
+   z-index: 30;
    width: 100%;
+   left: 0;
+   right: 0;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   pointer-events: none;
+   margin-top: 0;
 }
 
-
-.owl-theme .owl-nav [class*=owl-]{
-   width: 50px;
-   height: 50px;
+.owl-theme .owl-nav [class*=owl-],
+.owl-theme .owl-nav button {
+   width: 44px;
+   height: 44px;
    border-radius: 50%;
-   background:#ffffff73 !important;   
+   background: #ffffffb3 !important;
+   color: #333 !important;
+   display: flex !important;
+   align-items: center;
+   justify-content: center;
+   pointer-events: auto;
+   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+   transition: all 0.2s ease;
+   border: none;
+   cursor: pointer;
 }
 
-.owl-theme .owl-nav [class*=owl-]:hover{
-   width: 50px;
-   height: 50px;
-   color: #FC673D;
-   background:#ffffffa4 !important;  
-}
-
-.owl-prev{
-   float: left;
-}
-
-.owl-next{
-   float: right;
+.owl-theme .owl-nav [class*=owl-]:hover,
+.owl-theme .owl-nav button:hover {
+   color: #FC673D !important;
+   background: #ffffff !important;
+   transform: scale(1.05);
 }
 
 .trendingProducts .item{

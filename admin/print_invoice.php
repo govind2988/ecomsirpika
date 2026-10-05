@@ -62,7 +62,7 @@ $order = $orderResult->fetch_assoc();
 |--------------------------------------------------------------------------
 */
 $itemsStmt = $conn->prepare("
-    SELECT oi.quantity, oi.price, p.name AS product_name
+    SELECT oi.quantity, oi.price, oi.is_bulk, p.name AS product_name
     FROM order_items oi
     JOIN products p ON oi.product_id = p.id
     WHERE oi.order_id = ?
@@ -168,6 +168,17 @@ $itemsResult = $itemsStmt->get_result();
             background: #f9f9f9;
         }
 
+        .bulk-tag {
+            display: inline-block;
+            font-size: 11px;
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 2px 6px;
+            border-radius: 9999px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
         #printBtn {
             display: block;
             margin: 30px auto 0;
@@ -250,22 +261,55 @@ $itemsResult = $itemsStmt->get_result();
             <tbody>
                 <?php
                 $grandTotal = 0;
+                $hasBulk = false;
+                $hasRetail = false;
                 while ($item = $itemsResult->fetch_assoc()):
-                    $subtotal = $item['quantity'] * $item['price'];
-                    $grandTotal += $subtotal;
+                    $isBulk = !empty($item['is_bulk']);
+                    if ($isBulk) {
+                        $hasBulk = true;
+                    } else {
+                        $hasRetail = true;
+                        $subtotal = $item['quantity'] * $item['price'];
+                        $grandTotal += $subtotal;
+                    }
                 ?>
                 <tr>
-                    <td style="text-align: left;"><?= htmlspecialchars($item['product_name']) ?></td>
-                    <td><?= number_format((float)$item['price'], 2) ?></td>
+                    <td style="text-align: left;">
+                        <?= htmlspecialchars($item['product_name']) ?>
+                        <?php if ($isBulk): ?>
+                            <span class="bulk-tag">Bulk Order</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($isBulk): ?>
+                            <span style="color: #6b7280; font-style: italic;">Price on Request</span>
+                        <?php else: ?>
+                            <?= number_format((float)$item['price'], 2) ?>
+                        <?php endif; ?>
+                    </td>
                     <td><?= (int)$item['quantity'] ?></td>
-                    <td><?= number_format($subtotal, 2) ?></td>
+                    <td>
+                        <?php if ($isBulk): ?>
+                            <span style="color: #6b7280; font-style: italic;">Price on Request</span>
+                        <?php else: ?>
+                            <?= number_format($subtotal, 2) ?>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <?php endwhile; ?>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="3" style="text-align:right">Grand Total:</td>
-                    <td>₹<?= number_format($grandTotal, 2) ?></td>
+                    <td>
+                        <?php if ($hasRetail && $hasBulk): ?>
+                            ₹<?= number_format($grandTotal, 2) ?> <span style="font-size: 11px; color: #6b7280; font-weight: normal;">(+ Bulk on Request)</span>
+                        <?php elseif ($hasBulk && !$hasRetail): ?>
+                            <span style="color: #065f46;">Price on Request (Bulk)</span>
+                        <?php else: ?>
+                            ₹<?= number_format($grandTotal, 2) ?>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             </tfoot>
         </table>

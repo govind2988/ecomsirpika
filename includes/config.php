@@ -28,3 +28,10 @@ if (!defined('WHATSAPP_NO')) {
 if (!defined('ORDER_MODE')) {
     define('ORDER_MODE', $_ENV['ORDER_MODE'] ?? 'traditional');
 }
+if (!defined('BULK_ORDER_QTY')) {
+    define('BULK_ORDER_QTY', (int)($_ENV['BULK_ORDER_QTY'] ?? 5));
+}
+if (!defined('ENABLE_INDEX_BULK_ORDER')) {
+    $val = $_ENV['ENABLE_INDEX_BULK_ORDER'] ?? false;
+    define('ENABLE_INDEX_BULK_ORDER', filter_var($val, FILTER_VALIDATE_BOOLEAN));
+}

@@ -213,9 +213,13 @@ if (
 | Fetch orders
 |--------------------------------------------------------------------------
 */
-$sql = "SELECT id, customer_name, status, DATE_FORMAT(order_date, '%d/%m/%Y') AS order_date, total, created_at 
-        FROM orders 
-        ORDER BY order_date DESC";
+$sql = "SELECT o.id, o.customer_name, o.status, DATE_FORMAT(o.order_date, '%d/%m/%Y') AS order_date, o.total, o.created_at,
+               SUM(CASE WHEN oi.is_bulk = 1 THEN 1 ELSE 0 END) AS bulk_count,
+               SUM(CASE WHEN oi.is_bulk = 0 THEN 1 ELSE 0 END) AS retail_count
+        FROM orders o 
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        GROUP BY o.id
+        ORDER BY o.order_date DESC";
 
 $result = $conn->query($sql);
 
@@ -333,7 +337,16 @@ include '_header.php';
                     <tr class="hover:bg-gray-50 order-row" data-order-id="<?= (int)$row['id'] ?>" data-customer-name="<?= strtolower(htmlspecialchars($row['customer_name'])) ?>" data-status="<?= htmlspecialchars($row['status']) ?>">
                         <td class="py-2 px-4 border-b"><?= (int)$row['id'] ?></td>
                         <td class="py-2 px-4 border-b"><?= htmlspecialchars($row['customer_name']) ?></td>
-                        <td class="py-2 px-4 border-b">₹<?= number_format((float)$row['total'], 2) ?></td>
+                        <td class="py-2 px-4 border-b">
+                            <?php if ((int)$row['bulk_count'] > 0 && (int)$row['retail_count'] == 0): ?>
+                                <span class="text-green-700 font-semibold text-xs">Price on Request</span>
+                            <?php elseif ((int)$row['bulk_count'] > 0 && (int)$row['retail_count'] > 0): ?>
+                                ₹<?= number_format((float)$row['total'], 2) ?>
+                                <span class="text-xs text-gray-500 font-normal block">+ Bulk Items</span>
+                            <?php else: ?>
+                                ₹<?= number_format((float)$row['total'], 2) ?>
+                            <?php endif; ?>
+                        </td>
                         <td class="py-2 px-4 border-b"><?= htmlspecialchars($row['status']) ?></td>
                         <td class="py-2 px-4 border-b"><?= htmlspecialchars($row['order_date']) ?></td>
                         <td class="py-2 px-4 border-b">

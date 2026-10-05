@@ -7,27 +7,91 @@ include_once __DIR__ . '/../includes/config.php';
 include_once 'settings.php';
 
 
+// AJAX Individual Product Bulk Order Toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] === 'toggle_product_bulk') {
+    $product_id = (int)$_POST['product_id'];
+    $is_bulk = !empty($_POST['is_bulk']);
+
+    if (!isset($_SESSION['bulk_items'])) {
+        $_SESSION['bulk_items'] = [];
+    }
+
+    if ($is_bulk) {
+        $_SESSION['bulk_items'][$product_id] = true;
+        // If product is already in cart with qty > 0 and < BULK_ORDER_QTY, bump it to BULK_ORDER_QTY
+        if (!empty($_SESSION['cart'][$product_id]) && $_SESSION['cart'][$product_id] < BULK_ORDER_QTY) {
+            $_SESSION['cart'][$product_id] = BULK_ORDER_QTY;
+        }
+    } else {
+        $_SESSION['bulk_items'][$product_id] = false;
+    }
+
+    $cartCount = array_sum($_SESSION['cart'] ?? []);
+    $qty = $_SESSION['cart'][$product_id] ?? 0;
+    echo json_encode([
+        'status' => 'success',
+        'product_id' => $product_id,
+        'isBulk' => !empty($_SESSION['bulk_items'][$product_id]),
+        'quantity' => $qty,
+        'cart' => $_SESSION['cart'] ?? [],
+        'cartCount' => $cartCount
+    ]);
+    exit;
+}
+
 // AJAX Cart Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] === 'update_cart') {
     $product_id = (int)$_POST['product_id'];
     $quantity = max(0, (int)$_POST['quantity']);
 
-    if ($quantity === 0) {
-        unset($_SESSION['cart'][$product_id]);
-    } else {
-        $_SESSION['cart'][$product_id] = $quantity;
+    if (!isset($_SESSION['bulk_items'])) {
+        $_SESSION['bulk_items'] = [];
     }
 
-    $cartCount = array_sum($_SESSION['cart']);
-    echo json_encode(['status' => 'success', 'cartCount' => $cartCount]);
+    if (isset($_POST['is_bulk'])) {
+        $_SESSION['bulk_items'][$product_id] = !empty($_POST['is_bulk']);
+    }
+
+    if ($quantity === 0) {
+        unset($_SESSION['cart'][$product_id]);
+        unset($_SESSION['bulk_items'][$product_id]);
+    } else {
+        $_SESSION['cart'][$product_id] = $quantity;
+        // If qty is reduced below BULK_ORDER_QTY, auto disable bulk mode for this product
+        if ($quantity < BULK_ORDER_QTY) {
+            $_SESSION['bulk_items'][$product_id] = false;
+        }
+    }
+
+    $cartCount = array_sum($_SESSION['cart'] ?? []);
+    $isItemBulk = !empty($_SESSION['bulk_items'][$product_id]);
+    echo json_encode([
+        'status' => 'success',
+        'cartCount' => $cartCount,
+        'product_id' => $product_id,
+        'isBulk' => $isItemBulk
+    ]);
     exit;
 }
 
+// Validate bulk_items session on initial load
+if (!isset($_SESSION['bulk_items'])) {
+    $_SESSION['bulk_items'] = [];
+}
+foreach ($_SESSION['bulk_items'] as $pid => $isBulk) {
+    if ($isBulk) {
+        $qty = $_SESSION['cart'][$pid] ?? 0;
+        if ($qty > 0 && $qty < BULK_ORDER_QTY) {
+            $_SESSION['bulk_items'][$pid] = false;
+        }
+    }
+}
+$bulkItems = $_SESSION['bulk_items'] ?? [];
+
 $cartCount = array_sum($_SESSION['cart'] ?? []);
 
-// $currentPage = basename($_SERVER['PHP_SELF']);
-
 $currentPage = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
 
 ?>
 
@@ -52,8 +116,16 @@ $currentPage = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
   <script src="https://cdn.tailwindcss.com"></script> 
  
+  <script>
+    window.BULK_ORDER_QTY = <?= defined('BULK_ORDER_QTY') ? (int)BULK_ORDER_QTY : 5 ?>;
+    window.BULK_ITEMS = <?= json_encode(array_filter($_SESSION['bulk_items'] ?? [])) ?>;
+    window.ENABLE_INDEX_BULK_ORDER = <?= (defined('ENABLE_INDEX_BULK_ORDER') && ENABLE_INDEX_BULK_ORDER) ? 'true' : 'false' ?>;
+  </script>
+
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <!-- Colorbox CSS -->
   <link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>assets/vendor/colobox/css/colorbox.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>

@@ -31,6 +31,7 @@ if (isset($_POST['place_order'])) {
 
         $total = 0;
         $order_items = [];
+        $hasAnyBulk = false;
 
         while ($row = $result->fetch_assoc()) {
             $pid = (int)$row['id'];
@@ -38,15 +39,27 @@ if (isset($_POST['place_order'])) {
             if ($qty <= 0) continue;
 
             $price = ($row['sale_price'] ?? 0) > 0 ? $row['sale_price'] : $row['rrp_price'];
-            $subtotal = $price * $qty;
-            $total += $subtotal;
-
-            $order_items[] = [
-                'product_id' => $pid,
-                'product_name' => $conn->real_escape_string($row['name']),
-                'price' => $price,
-                'quantity' => $qty
-            ];
+            $isBulk = !empty($_SESSION['bulk_items'][$pid]);
+            if ($isBulk) {
+                $hasAnyBulk = true;
+                $order_items[] = [
+                    'product_id' => $pid,
+                    'product_name' => $conn->real_escape_string($row['name']),
+                    'price' => 0.00,
+                    'quantity' => $qty,
+                    'is_bulk' => 1
+                ];
+            } else {
+                $subtotal = $price * $qty;
+                $total += $subtotal;
+                $order_items[] = [
+                    'product_id' => $pid,
+                    'product_name' => $conn->real_escape_string($row['name']),
+                    'price' => $price,
+                    'quantity' => $qty,
+                    'is_bulk' => 0
+                ];
+            }
         }
 
         // Insert into orders table
@@ -59,27 +72,44 @@ if (isset($_POST['place_order'])) {
             $pid = $item['product_id'];
             $qty = $item['quantity'];
             $price = $item['price'];
+            $is_bulk = $item['is_bulk'];
 
-            $conn->query("INSERT INTO order_items (order_id, product_id, quantity, price)
-                          VALUES ($order_id, $pid, $qty, $price)");
+            $conn->query("INSERT INTO order_items (order_id, product_id, quantity, price, is_bulk)
+                          VALUES ($order_id, $pid, $qty, $price, $is_bulk)");
         }
 
-        // Clear cart and CAPTCHA
-        unset($_SESSION['cart']);
-        unset($_SESSION['captcha']);
+        // Clear cart, bulk and CAPTCHA
+        unset($_SESSION['cart'], $_SESSION['bulk_items'], $_SESSION['captcha']);
+        $_SESSION['cart'] = [];
+        $_SESSION['bulk_items'] = [];
 
         if ($mode === 'whatsapp') {
-            $whatsapp_message = "🛒 Order Details:%0A";
+            $whatsapp_message = "*Order Items:*\n";
+            $allBulk = true;
+            $calculatedTotal = 0;
             foreach ($order_items as $item) {
-                $line = "{$item['product_name']} (x{$item['quantity']}) - ₹" . ($item['price'] * $item['quantity']);
-                $whatsapp_message .= $line . "%0A";
+                if (!empty($item['is_bulk'])) {
+                    $whatsapp_message .= "• {$item['product_name']} (x{$item['quantity']}) - Bulk Order (Price on Request)\n";
+                } else {
+                    $allBulk = false;
+                    $lineTotal = $item['price'] * $item['quantity'];
+                    $calculatedTotal += $lineTotal;
+                    $whatsapp_message .= "• {$item['product_name']} (x{$item['quantity']}) - ₹{$lineTotal}\n";
+                }
             }
 
-            $encoded = urlencode("👋 Hi, I have placed an order.%0A%0A$name%0A$phone%0A$address%0A%0A$whatsapp_message");
-            $whatsapp_number = "91xxxxxxxxxx"; // Replace with your number
+            if ($allBulk) {
+                $whatsapp_message .= "\nTotal: Price on Request (Bulk Inquiry)";
+            } else {
+                $whatsapp_message .= "\nTotal: Rs {$calculatedTotal}" . ($hasAnyBulk ? " (+ Bulk items on Request)" : "");
+            }
+
+            $encoded = urlencode("👋 Hi, I have placed an order.\n\n$name\n$phone\n$address\n\n$whatsapp_message");
+            $whatsapp_number = WHATSAPP_NO;
             header("Location: https://wa.me/$whatsapp_number?text=$encoded");
             exit;
         } else {
+
             $message = "✅ Order placed successfully!";
         }
     }

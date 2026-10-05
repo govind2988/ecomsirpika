@@ -46,16 +46,22 @@ if (isset($_POST['place_order'])) {
         $product_ids = array_keys($cart);
         $idList = implode(',', array_map('intval', $product_ids));
         $res = $conn->query("SELECT id,name,rrp_price,sale_price FROM products WHERE id IN ($idList)");
-        $order_items = []; $total = 0;
+        $order_items = []; $total = 0; $hasAnyBulk = false;
 
         while ($row = $res->fetch_assoc()) {
             $pid = (int)$row['id'];
             $qty = (int)($cart[$pid] ?? 0);
             if ($qty <= 0) continue;
             $price = ($row['sale_price'] ?? 0) > 0 ? $row['sale_price'] : $row['rrp_price'];
-            $subtotal = $price * $qty;
-            $total += $subtotal;
-            $order_items[] = ['product_id'=>$pid,'product_name'=>$row['name'],'price'=>$price,'quantity'=>$qty];
+            $isBulk = !empty($_SESSION['bulk_items'][$pid]);
+            if ($isBulk) {
+                $hasAnyBulk = true;
+                $order_items[] = ['product_id'=>$pid,'product_name'=>$row['name'],'price'=>0.00,'quantity'=>$qty,'is_bulk'=>1];
+            } else {
+                $subtotal = $price * $qty;
+                $total += $subtotal;
+                $order_items[] = ['product_id'=>$pid,'product_name'=>$row['name'],'price'=>$price,'quantity'=>$qty,'is_bulk'=>0];
+            }
         }
 
         $conn->query("INSERT INTO orders (status, customer_name, customer_phone, customer_email, customer_address, total)
@@ -63,46 +69,52 @@ if (isset($_POST['place_order'])) {
         $order_id = $conn->insert_id;
 		
         foreach ($order_items as $it) {
-            $conn->query("INSERT INTO order_items (order_id, product_id, quantity, price)
-                          VALUES ($order_id,{$it['product_id']},{$it['quantity']},{$it['price']})");
+            $conn->query("INSERT INTO order_items (order_id, product_id, quantity, price, is_bulk)
+                          VALUES ($order_id,{$it['product_id']},{$it['quantity']},{$it['price']},{$it['is_bulk']})");
         }
 
-        unset($_SESSION['cart'], $_SESSION['captcha']);
+        unset($_SESSION['cart'], $_SESSION['captcha'], $_SESSION['bulk_items']);
 	 	$_SESSION['cart'] = [];
+        $_SESSION['bulk_items'] = [];
         $bShowCart = false;
 		
      //   $orderTotal = $total + $settings['shipping_charges']; // include shipping if desired
 		$orderTotal = $total;
 
-       if ($mode === 'whatsapp') {
+        if ($mode === 'whatsapp') {
+            $msg = "*New Order Received*\n\n";
+            $msg .= "Order ID: #{$order_id}\n\n";
+            $msg .= "Name: $name\n";
+            $msg .= "Phone: $phone\n";
+            $msg .= "Email: $email\n";
+            $msg .= "Address: $address\n\n";
+            $msg .= "*Order Items:*\n";
 
-		// Build clean message (NO %0A here)		
-		$msg = "*New Order Received*\n\n";
-		
-		$msg .= "Order ID: #{$order_id}\n\n";
+            $calculatedTotal = 0;
+            $allBulk = true;
+            foreach ($order_items as $it) {
+                $pid = $it['product_id'];
+                $isItemBulk = !empty($it['is_bulk']);
+                if ($isItemBulk) {
+                    $msg .= "• {$it['product_name']} (x{$it['quantity']}) - Bulk Order (Price on Request)\n";
+                } else {
+                    $allBulk = false;
+                    $lineTotal = $it['price'] * $it['quantity'];
+                    $calculatedTotal += $lineTotal;
+                    $msg .= "• {$it['product_name']} (x{$it['quantity']}) - ₹{$lineTotal}\n";
+                }
+            }
 
-		$msg .= "Name: $name\n";
-		$msg .= "Phone: $phone\n";
-		$msg .= "Email: $email\n";
-		$msg .= "Address: $address\n\n";
+            $msg .= "\n\n Payment: WhatsApp Order";
+            if ($allBulk) {
+                $msg .= "\nTotal: Price on Request (Bulk Inquiry)";
+            } else {
+                $msg .= "\nTotal: Rs {$calculatedTotal}" . ($hasAnyBulk ? " (+ Bulk items on Request)" : "");
+            }
 
-		$msg .= "*Order Items:*\n";
-
-		foreach ($order_items as $it) {
-			$lineTotal = $it['price'] * $it['quantity'];
-			$msg .= "• {$it['product_name']} (x{$it['quantity']}) - ₹{$lineTotal}\n";
-		}
-
-
-		$msg .= "\n\n Payment: WhatsApp Order";
-
-		$msg .= "Total: Rs {$orderTotal}";
-
-		$encoded = rawurlencode($msg);
-
-		header("Location: https://wa.me/$whNumber?text=$encoded");
-		exit;
-		
+            $encoded = rawurlencode($msg);
+            header("Location: https://wa.me/$whNumber?text=$encoded");
+            exit;
 		} else {
             $message = "✅ Order placed successfully!";
 			
@@ -129,8 +141,20 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_id']) && iss
     $qty = max(1, (int)$_POST['quantity']);
     if (isset($_SESSION['cart'][$pid])) {
         $_SESSION['cart'][$pid] = $qty;
-		$cartCount = array_sum($_SESSION['cart']);
-        echo json_encode(['success' => true, 'cartCount' => $cartCount]);
+        if (!isset($_SESSION['bulk_items'])) {
+            $_SESSION['bulk_items'] = [];
+        }
+        if ($qty < BULK_ORDER_QTY) {
+            $_SESSION['bulk_items'][$pid] = false;
+        }
+        $cartCount = array_sum($_SESSION['cart']);
+        $isItemBulk = !empty($_SESSION['bulk_items'][$pid]);
+        echo json_encode([
+            'success' => true,
+            'cartCount' => $cartCount,
+            'cart_id' => $pid,
+            'isBulk' => $isItemBulk
+        ]);
         exit;
     }
 	
@@ -142,10 +166,26 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_id']) && iss
 if (isset($_GET['remove'])) {
     $pid = (int)$_GET['remove'];
     unset($_SESSION['cart'][$pid]);
+    unset($_SESSION['bulk_items'][$pid]);
 }
+
+// Validate per-product bulk order status
+if (!isset($_SESSION['bulk_items'])) {
+    $_SESSION['bulk_items'] = [];
+}
+foreach ($_SESSION['bulk_items'] as $pid => $isBulk) {
+    if ($isBulk) {
+        $qty = $_SESSION['cart'][$pid] ?? 0;
+        if ($qty > 0 && $qty < BULK_ORDER_QTY) {
+            $_SESSION['bulk_items'][$pid] = false;
+        }
+    }
+}
+$bulkItems = $_SESSION['bulk_items'] ?? [];
+
 // handle quantity ajax, updates, remove, and compute $cartItems, $total for initial display
 $productIds = array_keys($_SESSION['cart']);
-$cartItems = []; $total = 0;
+$cartItems = []; $total = 0; $totalPriced = 0; $hasBulk = false; $hasNormal = false;
 if (!empty($productIds)) {
 	$idList = implode(',', array_map('intval', $productIds));
 	$res = $conn->query("SELECT id,name,
@@ -153,20 +193,29 @@ if (!empty($productIds)) {
 		FROM products WHERE id IN ($idList)");
 	while ($row = $res->fetch_assoc()) {
 		$pid = $row['id']; $qty = $_SESSION['cart'][$pid];
+        $isBulk = !empty($bulkItems[$pid]);
 		$sub = $qty * $row['price']; $total += $sub;
-		$row['quantity'] = $qty; $row['subtotal'] = $sub;
+        if ($isBulk) {
+            $hasBulk = true;
+        } else {
+            $hasNormal = true;
+            $totalPriced += $sub;
+        }
+		$row['quantity'] = $qty; $row['subtotal'] = $sub; $row['is_bulk'] = $isBulk;
 		$cartItems[] = $row;
 	}
 }
+
+$allBulk = !empty($cartItems) && !$hasNormal && $hasBulk;
 
 include_once '_header.php';
 ?>
 
 <main class="container mx-auto mt-8 px-4">
  <?php if ($message): ?>
-   <div id="msgHolder"class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded"><?= $message ?></div>
+   <div id="msgHolder" class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded"><?= $message ?></div>
  <?php else: ?>
-   <div id="msgHolder"class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded hidden"></div>
+   <div id="msgHolder" class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded hidden"></div>
   <h1 class="text-2xl font-bold mb-6">Shopping Cart</h1>
  <?php endif; ?>
  <?php if (!empty($cartItems)): ?>
@@ -186,10 +235,18 @@ include_once '_header.php';
               </tr>
             </thead>
             <tbody>
-            <?php foreach ($cartItems as $item): ?>
-              <tr class="border-t hover:bg-yellow-50">
-                <td class="w-1/3 p-3 font-medium"><?= htmlspecialchars($item['name']) ?></td>
-                <td class="p-3 text-lg ">₹<?= number_format($item['price'], 2) ?></td>
+            <?php foreach ($cartItems as $item): 
+              $isItemBulk = !empty($item['is_bulk']);
+            ?>
+              <tr class="border-t hover:bg-yellow-50" id="cart_row_<?= $item['id'] ?>">
+                <td class="w-1/3 p-3 font-medium">
+                  <?= htmlspecialchars($item['name']) ?>
+                  <span class="cart-bulk-badge text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold ml-2 <?= $isItemBulk ? '' : 'hidden' ?>" id="bulk_badge_<?= $item['id'] ?>">Bulk Order</span>
+                </td>
+                <td class="p-3 text-lg">
+                  <span class="cart-item-price <?= $isItemBulk ? 'hidden' : '' ?>" id="price_display_<?= $item['id'] ?>">₹<?= number_format($item['price'], 2) ?></span>
+                  <span class="cart-bulk-price text-gray-500 text-sm italic <?= $isItemBulk ? '' : 'hidden' ?>" id="bulk_price_display_<?= $item['id'] ?>">Price on Request</span>
+                </td>
                 <td class="p-3">
                   <div class="flex items-center">
                     <button type="button" onclick="changeQty(<?= $item['id'] ?>, -1)" class="bg-yellow-400 text-red-700 px-2 py-1 rounded-l hover:bg-yellow-500 w-10 h-10"><i class="fa-solid fa-minus"></i></button>
@@ -199,12 +256,16 @@ include_once '_header.php';
                            min="1"
                            data-cart-id="<?= $item['id'] ?>"
                            data-price="<?= $item['price'] ?>"
+                           data-is-bulk="<?= $isItemBulk ? '1' : '0' ?>"
                            name="quantities[<?= $item['id'] ?>]"
                            value="<?= $item['quantity'] ?>" />
                     <button type="button" onclick="changeQty(<?= $item['id'] ?>, 1)" class="h-10 w-10 bg-yellow-400 text-red-700 px-2 py-1 rounded-r hover:bg-yellow-500"><i class="fa-solid fa-plus"></i></button>
                   </div>
                 </td>
-                <td class="p-3 subtotal text-green-700 font-semibold" id="subtotal-<?= $item['id'] ?>">₹<?= number_format($item['subtotal'], 2) ?></td>
+                <td class="p-3">
+                  <span class="subtotal-val text-green-700 font-semibold <?= $isItemBulk ? 'hidden' : '' ?>" id="subtotal-<?= $item['id'] ?>">₹<?= number_format($item['subtotal'], 2) ?></span>
+                  <span class="cart-bulk-subtotal text-gray-500 text-sm italic <?= $isItemBulk ? '' : 'hidden' ?>" id="bulk_subtotal_<?= $item['id'] ?>">Price on Request</span>
+                </td>
                 <td class="p-3 text-center">
                   <a href="cart.php?remove=<?= $item['id'] ?>" class="text-red-600 hover:text-red-800 font-bold px-2 py-1 rounded hover:bg-yellow-200 transition"><i class="fa-solid fa-trash-can"></i></a>
                 </td>
@@ -217,12 +278,14 @@ include_once '_header.php';
     </div>
     <div>
       <div class="bg-white rounded-lg shadow-lg p-6 mb-4">
+        <div id="bulkCartNotice" class="<?= $hasBulk ? '' : 'hidden' ?> bg-green-50 border border-green-200 text-green-800 p-3 rounded-lg mb-4 text-sm font-medium">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> <strong>Bulk Items:</strong> Prices for bulk products are provided upon quotation.
+        </div>
         <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
         <?php
           $itemCount = array_sum(array_column($cartItems, 'quantity'));
-        //  $shipping = $total > 0 ? $settings['shipping_charges'] : 0;
-		  $shipping = 0;
-          $orderTotal = $total + $shipping;
+          $shipping = 0;
+          $orderTotal = $totalPriced + $shipping;
         ?>
         <div class="flex justify-between py-2 border-b">
           <span class="font-medium">No. of Items</span>
@@ -230,19 +293,24 @@ include_once '_header.php';
         </div>
         <div class="flex justify-between py-2 border-b">
           <span class="font-medium">Subtotal</span>
-          <span>₹<span id="summary-subtotal"><?= number_format($total, 2) ?></span></span>
+          <span id="subtotal-price-wrap" class="<?= $allBulk ? 'hidden' : '' ?>">₹<span id="summary-subtotal"><?= number_format($totalPriced, 2) ?></span></span>
+          <span id="subtotal-bulk-wrap" class="text-green-700 font-semibold text-sm <?= $allBulk ? '' : 'hidden' ?>">Price on Request</span>
         </div>
         <div class="flex justify-between py-2 border-b">
           <span class="font-medium">Shipping</span>
-          <span>₹<span id="summary-shipping"><?= number_format($shipping, 2) ?></span></span>
+          <span id="shipping-price-wrap" class="<?= $allBulk ? 'hidden' : '' ?>">₹<span id="summary-shipping"><?= number_format($shipping, 2) ?></span></span>
+          <span id="shipping-bulk-wrap" class="text-gray-500 text-sm <?= $allBulk ? '' : 'hidden' ?>">To be confirmed</span>
         </div>
         <div class="flex justify-between py-2 text-lg font-bold text-primary">
           <span>Order Total</span>
-          <span>₹<span id="summary-total"><?= number_format($orderTotal, 2) ?></span></span>
+          <span id="total-price-wrap" class="<?= $allBulk ? 'hidden' : '' ?>">₹<span id="summary-total"><?= number_format($orderTotal, 2) ?></span></span>
+          <span id="total-bulk-wrap" class="text-green-700 font-bold text-base <?= $allBulk ? '' : 'hidden' ?>">Price on Request</span>
         </div>
       </div>
 	   <div class="bg-white rounded-lg shadow-lg p-6 ">
         <h2 class="text-xl font-semibold mb-4">Delivery Address</h2>
+
+
       
       <form id="checkoutForm" method="post">
       <input type="hidden" name="mode" value="<?= htmlspecialchars($mode) ?>">
@@ -331,9 +399,97 @@ include_once '_header.php';
 
 </main>
 <script>
-  
- 
   var shippingCharges = 0;
+
+  function updateItemBulkState(cartId, isBulk) {
+    const badge = document.getElementById('bulk_badge_' + cartId);
+    const priceDisplay = document.getElementById('price_display_' + cartId);
+    const bulkPrice = document.getElementById('bulk_price_display_' + cartId);
+    const subtotalDisplay = document.getElementById(`subtotal-${cartId}`);
+    const bulkSubtotal = document.getElementById('bulk_subtotal_' + cartId);
+    const input = document.getElementById('qty-' + cartId);
+
+    if (input) input.dataset.isBulk = isBulk ? '1' : '0';
+
+    if (isBulk) {
+      if (badge) badge.classList.remove('hidden');
+      if (priceDisplay) priceDisplay.classList.add('hidden');
+      if (bulkPrice) bulkPrice.classList.remove('hidden');
+      if (subtotalDisplay) subtotalDisplay.classList.add('hidden');
+      if (bulkSubtotal) bulkSubtotal.classList.remove('hidden');
+    } else {
+      if (badge) badge.classList.add('hidden');
+      if (priceDisplay) priceDisplay.classList.remove('hidden');
+      if (bulkPrice) bulkPrice.classList.add('hidden');
+      if (subtotalDisplay) subtotalDisplay.classList.remove('hidden');
+      if (bulkSubtotal) bulkSubtotal.classList.add('hidden');
+    }
+  }
+
+  function recalculateSummary() {
+    let totalPriced = 0;
+    let totalCount = 0;
+    let hasBulk = false;
+    let hasNormal = false;
+
+    document.querySelectorAll('.qty-input').forEach(i => {
+      const q = parseInt(i.value);
+      const p = parseFloat(i.dataset.price);
+      const isBulk = i.dataset.isBulk === '1';
+
+      if (!isNaN(q)) {
+        totalCount += q;
+        if (isBulk) {
+          hasBulk = true;
+        } else {
+          hasNormal = true;
+          if (!isNaN(p)) {
+            totalPriced += q * p;
+          }
+        }
+      }
+    });
+
+    const allBulk = hasBulk && !hasNormal;
+    const notice = document.getElementById('bulkCartNotice');
+    if (notice) {
+      if (hasBulk) notice.classList.remove('hidden');
+      else notice.classList.add('hidden');
+    }
+
+    const countEl = document.getElementById('cart-count');
+    const subtotalEl = document.getElementById('summary-subtotal');
+    const shipEl = document.getElementById('summary-shipping');
+    const totalEl = document.getElementById('summary-total');
+
+    if (countEl) countEl.innerText = totalCount;
+    if (subtotalEl) subtotalEl.innerText = totalPriced.toFixed(2);
+    if (shipEl) shipEl.innerText = (0).toFixed(2);
+    if (totalEl) totalEl.innerText = totalPriced.toFixed(2);
+
+    const subPrice = document.getElementById('subtotal-price-wrap');
+    const subBulk = document.getElementById('subtotal-bulk-wrap');
+    const shipPrice = document.getElementById('shipping-price-wrap');
+    const shipBulk = document.getElementById('shipping-bulk-wrap');
+    const totPrice = document.getElementById('total-price-wrap');
+    const totBulk = document.getElementById('total-bulk-wrap');
+
+    if (allBulk) {
+      if (subPrice) subPrice.classList.add('hidden');
+      if (subBulk) subBulk.classList.remove('hidden');
+      if (shipPrice) shipPrice.classList.add('hidden');
+      if (shipBulk) shipBulk.classList.remove('hidden');
+      if (totPrice) totPrice.classList.add('hidden');
+      if (totBulk) totBulk.classList.remove('hidden');
+    } else {
+      if (subPrice) subPrice.classList.remove('hidden');
+      if (subBulk) subBulk.classList.add('hidden');
+      if (shipPrice) shipPrice.classList.remove('hidden');
+      if (shipBulk) shipBulk.classList.add('hidden');
+      if (totPrice) totPrice.classList.remove('hidden');
+      if (totBulk) totBulk.classList.add('hidden');
+    }
+  }
   
   function changeQty(cartId, delta) {
     const input = document.getElementById('qty-' + cartId);
@@ -352,26 +508,17 @@ include_once '_header.php';
 
         if (quantity < 1 || isNaN(quantity)) return;
 
+        const minBulk = window.BULK_ORDER_QTY || 5;
+
+        if (quantity < minBulk && input.dataset.isBulk === '1') {
+          updateItemBulkState(cartId, false);
+        }
+
         const newSubtotal = quantity * price;
-        document.getElementById(`subtotal-${cartId}`).innerText = '₹' + newSubtotal.toFixed(2);
+        const subtotalEl = document.getElementById(`subtotal-${cartId}`);
+        if (subtotalEl) subtotalEl.innerText = '₹' + newSubtotal.toFixed(2);
 
-        let newTotal = 0;
-        let totalCount = 0;
-
-        document.querySelectorAll('.qty-input').forEach(i => {
-          const q = parseInt(i.value);
-          const p = parseFloat(i.dataset.price);
-          if (!isNaN(q) && !isNaN(p)) {
-            newTotal += q * p;
-            totalCount += q;
-          }
-        });
-
-        document.getElementById('summary-subtotal').innerText = newTotal.toFixed(2);
-        document.getElementById('cart-count').innerText = totalCount;
-		const shipping = newTotal > 0 ? shippingCharges : 0;
-        document.getElementById('summary-shipping').innerText = shipping.toFixed(2);
-        document.getElementById('summary-total').innerText = (newTotal + shipping).toFixed(2);
+        recalculateSummary();
 		
 		fetch('cart.php', {
           method: 'POST',
@@ -380,17 +527,15 @@ include_once '_header.php';
         })
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
-			console.log(data.success);
-			console.log(data.cartCount);
-			if(data.success)
-				{
+			if (data.success) {
 				updateCartCount(data.cartCount);
-				}
-			else 
-				{
+                if (data.isBulk !== undefined) {
+                    updateItemBulkState(cartId, data.isBulk);
+                    recalculateSummary();
+                }
+			} else {
 				alert('Failed to update quantity.');
-				}
+			}
 		  })
 		  .catch(error => {
 			console.error("Error:", error);
@@ -399,6 +544,7 @@ include_once '_header.php';
       });
     });
   });
+
   
  // Update the cart count badge in header
 
